@@ -13,25 +13,25 @@ if (navToggle && navMenu) {
 const productInfo = {
     "dubai": {
         title: "Dubai Chewy Chocolate",
-        img: "dubaicookie.JPG",
+        img: "product images/dubaicookie.JPG",
         desc: "A viral sensation! This best-selling cookie features a crunchy pistachio kunafa filling wrapped in premium milk chocolate.",
         prices: ["Solo: ₱129", "Box of 3: ₱349", "Box of 4: ₱429"]
     },
     "mango-graham": {
-        title: "Mango Graham Cake",
+        title: "product images/Mango Graham Cake",
         img: "mangograham.jpg",
         desc: "A classic Filipino favorite. Perfectly layered sweet mangoes, chilled cream, and graham crackers.",
         prices: ["Family Tub (6-8 pax): ₱599"]
     },
     "mango-sticky": {
         title: "Mango Sticky Rice",
-        img: "mangosticky.jpg",
+        img: "product images/mangosticky.jpg",
         desc: "Sweet, salty, and creamy! Authentic sticky rice paired with fresh mangoes and our signature coconut sauce.",
         prices: ["Tray (5-6 pax): ₱549"]
     },
     "banana": {
         title: "Banana Loaf with Choco Chips",
-        img: "bananaloaf.jpg",
+        img: "product images/bananaloaf.jpg",
         desc: "Baked fresh daily! Our moist banana bread is packed with rich chocolate chips for the ultimate comfort snack.",
         prices: ["Small Tub (2-3 pax): ₱200"]
     }
