@@ -143,13 +143,17 @@
 }
 
 .modal-content {
-    background-color: white;
+    background: white;
     margin: 5% auto;
-    padding: 30px;
+    padding: 40px;
     width: 90%;
-    max-width: 850px;
+    max-width: 850px; /* Rigid width for consistency */
+    min-height: 450px; /* Rigid height for consistency */
     border-radius: 24px;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .close-modal {
@@ -162,14 +166,30 @@
 
 .modal-body {
     display: flex;
-    gap: 30px;
-    align-items: center;
+    gap: 40px;
+    align-items: stretch; /* Forces both sides to be equal height */
+}
+
+.modal-image {
+    flex: 1;
+    width: 350px; 
+    height: 350px; /* Fixed height for the image area */
+    overflow: hidden;
+    border-radius: 15px;
 }
 
 .modal-image img {
     width: 100%;
-    max-width: 350px;
-    border-radius: 15px;
+    height: 100%;
+    object-fit: cover; /* CROPS images to fit perfectly without stretching */
+    display: block;
+}
+
+.modal-details {
+    flex: 1.2;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes button to the bottom */
 }
 
 .price-item {
