@@ -18,8 +18,8 @@ const productInfo = {
         prices: ["Solo: ₱129", "Box of 3: ₱349", "Box of 4: ₱429"]
     },
     "mango-graham": {
-        title: "product images/Mango Graham Cake",
-        img: "mangograham.jpg",
+        title: "Mango Graham Cake",
+        img: "product images/mangograham.jpg",
         desc: "A classic Filipino favorite. Perfectly layered sweet mangoes, chilled cream, and graham crackers.",
         prices: ["Family Tub (6-8 pax): ₱599"]
     },
