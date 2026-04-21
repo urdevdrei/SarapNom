@@ -55,12 +55,19 @@ document.querySelectorAll('.product-card').forEach(card => {
             
             const priceList = document.getElementById("modalPriceList");
             // Clears old prices and adds new ones
-            priceList.innerHTML = data.prices.map(p => `
-                <div class="price-item">
-                    <span>${p.split(':')[0]}</span> 
-                    <span>${p.split(':')[1]}</span>
-                </div>
-            `).join('');
+    priceList.innerHTML = data.prices.map((p, index) => {
+        const label = p.split(':')[0].trim();
+        const cost = p.split(':')[1].trim();
+        return `
+            <label class="price-option">
+                <input type="radio" name="product-size" value="${label}" ${index === 0 ? 'checked' : ''}>
+                <div class="option-content">
+                    <span class="option-label">${label}</span>
+                    <span class="option-cost">${cost}</span>
+            </div>
+        </label>
+    `;
+    }).join('');
             
             modal.style.display = "block";
         }

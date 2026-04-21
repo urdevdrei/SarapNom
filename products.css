@@ -205,3 +205,56 @@
 @media (max-width: 768px) {
     .modal-body { flex-direction: column; text-align: center; }
 }
+
+/* --- SELECTABLE PRICE OPTIONS --- */
+.price-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 25px;
+    background: transparent; /* Remove old background if necessary */
+    padding: 0;
+}
+
+.price-option {
+    cursor: pointer;
+    display: block;
+    position: relative;
+}
+
+/* Hide the actual radio circle */
+.price-option input {
+    position: absolute;
+    opacity: 0;
+}
+
+/* The button look */
+.option-content {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    background: white;
+    font-weight: 500;
+}
+
+/* Hover effect */
+.price-option:hover .option-content {
+    border-color: var(--primary);
+    background: #fff9fa;
+}
+
+/* WHAT HAPPENS WHEN SELECTED */
+.price-option input:checked + .option-content {
+    border-color: var(--primary);
+    background: #fdf2f5;
+    color: var(--primary);
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(207, 139, 163, 0.1);
+}
+
+.option-cost {
+    color: var(--primary);
+}
