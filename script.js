@@ -87,3 +87,70 @@ window.onclick = (event) => {
         modal.style.display = "none";
     }
 };
+
+let cart = [];
+
+// Function to Open/Close Cart
+document.getElementById('cart-btn').onclick = () => document.getElementById('cart-sidebar').classList.add('active');
+document.querySelector('.close-cart').onclick = () => document.getElementById('cart-sidebar').classList.remove('active');
+
+// ADD TO CART FUNCTION
+document.querySelector('.modal-buy').addEventListener('click', () => {
+    const selectedOption = document.querySelector('input[name="product-size"]:checked');
+    const productName = document.getElementById('modalTitle').innerText;
+    const productImg = document.getElementById('modalImg').src;
+
+    if (selectedOption) {
+        // Extract price number: "₱349" -> 349
+        const priceText = selectedOption.parentElement.querySelector('.option-cost').innerText;
+        const price = parseInt(priceText.replace('₱', ''));
+        const sizeLabel = selectedOption.value;
+
+        const item = {
+            id: Date.now(),
+            name: productName,
+            size: sizeLabel,
+            price: price,
+            img: productImg
+        };
+
+        cart.push(item);
+        updateCartUI();
+        
+        // Visual feedback
+        document.getElementById('productModal').style.display = "none";
+        document.getElementById('cart-sidebar').classList.add('active');
+    }
+});
+
+function updateCartUI() {
+    const container = document.getElementById('cart-items');
+    const totalEl = document.getElementById('total-price');
+    const countEl = document.getElementById('cart-count');
+    
+    container.innerHTML = "";
+    let total = 0;
+
+    cart.forEach(item => {
+        total += item.price;
+        container.innerHTML += `
+            <div class="cart-item">
+                <img src="${item.img}">
+                <div class="item-info">
+                    <h4>${item.name}</h4>
+                    <small>${item.size}</small>
+                    <p>₱${item.price}</p>
+                </div>
+                <i class="fas fa-trash" onclick="removeItem(${item.id})" style="cursor:pointer; color:#ccc;"></i>
+            </div>
+        `;
+    });
+
+    totalEl.innerText = `₱${total}.00`;
+    countEl.innerText = cart.length;
+}
+
+function removeItem(id) {
+    cart = cart.filter(item => item.id !== id);
+    updateCartUI();
+}
