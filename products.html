@@ -37,54 +37,71 @@
     </section>
 
     <section class="products-grid-section">
-        <div class="products-container">
-            <div class="product-card">
-                <div class="product-image">
-                    <img src="dubaicookie.JPG" alt="Dubai Chocolate">
-                    <div class="product-badge">Best Seller</div>
-                </div>
-                <div class="product-info">
-                    <h3>Dubai Chewy Chocolate</h3>
-                    <p class="price">₱129.00</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                </div>
+    <div class="products-container">
+        <div class="product-card" data-product="dubai">
+            <div class="product-image">
+                <img src="dubaicookie.JPG" alt="Dubai Chocolate">
+                <div class="product-badge">Best Seller</div>
             </div>
-
-            <div class="product-card">
-                <div class="product-image">
-                    <img src="mangograham.jpg" alt="Mango Graham Cake">
-                </div>
-                <div class="product-info">
-                    <h3>Mango Graham Cake</h3>
-                    <p class="price">₱599.00</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">
-                    <img src="mangosticky.jpg" alt="Mango Sticky Rice">
-                </div>
-                <div class="product-info">
-                    <h3>Mango Sticky <br>Rice</h3>
-                    <p class="price">₱549.00</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">
-                    <img src="bananaloaf.jpg" alt="Banana Bread">
-                </div>
-                <div class="product-info">
-                    <h3>Banana Loaf With Chocolate Chips</h3>
-                    <p class="price">₱200.00</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                </div>
+            <div class="product-info">
+                <h3>Dubai Chewy Chocolate</h3>
+                <p class="price">₱129.00</p>
+                <button class="add-to-cart">Add to Cart</button>
             </div>
         </div>
-    </section>
 
-    <script src="script.js"></script>
+        <div class="product-card" data-product="mango-graham">
+            <div class="product-image">
+                <img src="mangograham.jpg" alt="Mango Graham Cake">
+            </div>
+            <div class="product-info">
+                <h3>Mango Graham Cake</h3>
+                <p class="price">₱599.00</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+
+        <div class="product-card" data-product="mango-sticky">
+            <div class="product-image">
+                <img src="mangosticky.jpg" alt="Mango Sticky Rice">
+            </div>
+            <div class="product-info">
+                <h3>Mango Sticky <br>Rice</h3>
+                <p class="price">₱549.00</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+
+        <div class="product-card" data-product="banana">
+            <div class="product-image">
+                <img src="bananaloaf.jpg" alt="Banana Bread">
+            </div>
+            <div class="product-info">
+                <h3>Banana Loaf With Chocolate Chips</h3>
+                <p class="price">₱200.00</p>
+                <button class="add-to-cart">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="productModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div class="modal-body">
+            <div class="modal-image">
+                <img id="modalImg" src="" alt="Product">
+            </div>
+            <div class="modal-details">
+                <h2 id="modalTitle"></h2>
+                <p id="modalDescription" class="item-desc"></p>
+                <div class="price-list" id="modalPriceList"></div>
+                <button class="cta-button modal-buy" style="border:none; width:100%; cursor:pointer;">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <script src="script.js"></script>
 </body>
 </html>
