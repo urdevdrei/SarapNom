@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Products - SarapNom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="navbar-brand">
+                <i class="fas fa-utensils"></i> SarapNom
+            </a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="about.html" class="nav-link">About</a></li>
+                <li><a href="products.html" class="nav-link active">Products</a></li>
+                <li><a href="contact.html" class="nav-link">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="products-header">
+        <div class="container">
+            <h1>Our Menu</h1>
+            <div class="filter-bar">
+                <button class="filter-btn active">All</button>
+                <button class="filter-btn">Cookies</button>
+                <button class="filter-btn">Mango</button>
+                <button class="filter-btn">Pastries</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="products-grid-section">
+        <div class="products-container">
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="dubaicookie.JPG" alt="Dubai Chocolate">
+                    <div class="product-badge">Best Seller</div>
+                </div>
+                <div class="product-info">
+                    <h3>Dubai Chewy Chocolate</h3>
+                    <p class="price">₱129.00</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="mangograham.jpg" alt="Mango Graham Cake">
+                </div>
+                <div class="product-info">
+                    <h3>Mango Graham Cake</h3>
+                    <p class="price">₱599.00</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="mangosticky.jpg" alt="Mango Sticky Rice">
+                </div>
+                <div class="product-info">
+                    <h3>Mango Sticky <br>Rice</h3>
+                    <p class="price">₱549.00</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="bananaloaf.jpg" alt="Banana Bread">
+                </div>
+                <div class="product-info">
+                    <h3>Banana Loaf With Chocolate Chips</h3>
+                    <p class="price">₱200.00</p>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
