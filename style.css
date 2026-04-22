@@ -106,7 +106,7 @@ body {
 
 .hero-section {
     min-height: 100vh;
-    background-image: url(/public/images/web-bg2.jpg); 
+    background-image: url(web-bg2.jpg);
     background-size: cover;        
     background-position: center 80%;    
     background-repeat: no-repeat;
