@@ -30,10 +30,22 @@ const productInfo = {
         prices: ["Tray (5-6 pax): ₱549"]
     },
     "banana": {
-        title: "Banana Loaf with Choco Chips",
+        title: "Banana Loaf Bread (Small Tub, 2-3 pax)",
         img: "product images/bananaloaf.jpg",
-        desc: "Baked fresh daily! Our moist banana bread is packed with rich chocolate chips for the ultimate comfort snack.",
-        prices: ["Small Tub (2-3 pax): ₱200"]
+        desc: "Baked fresh daily! Our moist banana bread is packed with rich chocolate chips, almonds, and Biscoff Cheesecake!.",
+        prices: ["Banana load with chocolate and almonds: ₱200", "Banana loaf with Biscoff Cheesecake & chocolate chips: ₱230"]
+    },
+    "brownies": {
+        title: "Fudgy Brownies (Box, 8x8 size)",
+        img: "product images/fudgybrownies.jpg",
+        desc: "Experience the ultimate chocolate indulgence with our oven-fresh fudgy brownies, featuring a dense, melt-in-your-mouth center and a perfect crackly crust.",
+        prices: ["Fudgy Brownies per Box: ₱499"]
+    },
+    "mini-cookies": {
+        title: "Mini butter chocolate chip cookies",
+        img: "product images/minicookies.jpg",
+        desc: "Bite-sized and buttery, our mini cookies are baked fresh and loaded with premium chocolate chips for the perfect golden crunch.",
+        prices: ["Box (50pcs): ₱449"]
     }
 };
 
