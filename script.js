@@ -173,3 +173,81 @@ document.getElementById("acceptBtn").addEventListener("click", function() {
     document.getElementById("termsPopup").style.display = "none";
     
 });
+
+// --- CHECKOUT LOGIC ---
+const checkoutModal = document.getElementById('checkout-modal');
+const closeCheckout = document.querySelector('.close-checkout');
+
+// Function to open checkout
+document.querySelector('.checkout-btn').addEventListener('click', () => {
+    if (cart.length === 0) {
+        alert("Your bag is empty!");
+        return;
+    }
+    
+    // Close the cart sidebar
+    document.getElementById('cart-sidebar').classList.remove('active');
+    
+    // Populate the checkout list
+    const listContainer = document.getElementById('checkout-items-list');
+    let total = 0;
+    
+    listContainer.innerHTML = cart.map(item => {
+        total += item.price;
+        return `
+            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                <span>${item.name} (${item.size})</span>
+                <span>₱${item.price}</span>
+            </div>
+        `;
+    }).join('');
+    
+    document.getElementById('checkout-final-amount').innerText = `₱${total}.00`;
+    
+    // Show the modal
+    checkoutModal.style.display = "block";
+});
+
+// Close checkout modal
+closeCheckout.onclick = () => checkoutModal.style.display = "none";
+
+window.onclick = (event) => {
+    if (event.target == checkoutModal) checkoutModal.style.display = "none";
+};
+
+// 1. Open Checkout Modal from Cart
+const checkoutBtn = document.querySelector('.checkout-btn');
+if (checkoutBtn) {
+    checkoutBtn.onclick = () => {
+        document.getElementById('cart-sidebar').classList.remove('active');
+        document.getElementById('checkout-modal').style.display = 'block';
+    };
+}
+
+// 2. Close Checkout Modal
+document.querySelector('.close-checkout').onclick = () => {
+    document.getElementById('checkout-modal').style.display = 'none';
+};
+
+// 3. Toggle Payment Method Logic
+document.querySelectorAll('input[name="pay-method"]').forEach(input => {
+    input.onchange = () => {
+        const method = input.value;
+        document.getElementById('gcash-area').style.display = (method === 'gcash') ? 'block' : 'none';
+        document.getElementById('address-area').style.display = (method === 'cod') ? 'block' : 'none';
+    };
+});
+
+// 4. Final Order Validation
+document.querySelector('.confirm-payment-btn').onclick = () => {
+    const method = document.querySelector('input[name="pay-method"]:checked').value;
+    if (method === 'cod') {
+        const addr = document.getElementById('delivery-address').value;
+        if (addr.length < 10) {
+            alert("Please provide a delivery address for COD.");
+            return;
+        }
+    }
+    alert("Order Received! Thank you for ordering from SarapNom.");
+    location.reload();
+};

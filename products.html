@@ -173,8 +173,39 @@
   </div>
 </div>
 
+<div id="checkout-modal" class="modal">
+    <div class="modal-content checkout-container">
+        <span class="close-checkout">&times;</span>
+        <h2>Delivery & Payment</h2>
+        
+        <div class="method-selector">
+            <label class="method-option">
+                <input type="radio" name="pay-method" value="gcash" checked>
+                <div class="method-box"><i class="fas fa-mobile-alt"></i> GCash</div>
+            </label>
+            <label class="method-option">
+                <input type="radio" name="pay-method" value="cod">
+                <div class="method-box"><i class="fas fa-truck"></i> COD</div>
+            </label>
+            <label class="method-option">
+                <input type="radio" name="pay-method" value="pickup">
+                <div class="method-box"><i class="fas fa-store"></i> Pickup</div>
+            </label>
+        </div>
 
+        <div id="gcash-area">
+            <div class="gcash-qr-placeholder">
+                <img src="payment images/gcashqr.jpg" alt="GCash QR">
+            </div>
+        </div>
 
+        <div id="address-area" style="display:none;">
+            <textarea id="delivery-address" placeholder="Enter full delivery address (House No., Street, Brgy, City)"></textarea>
+        </div>
+
+        <button class="confirm-payment-btn">Place Order</button>
+    </div>
+</div>
 
  <script src="script.js"></script>
 </body>

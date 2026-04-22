@@ -173,7 +173,7 @@
 .modal-image {
     flex: 1;
     width: 350px; 
-    height: 350px; /* Fixed height for the image area */
+    height: 350px; 
     overflow: hidden;
     border-radius: 15px;
 }
@@ -181,7 +181,7 @@
 .modal-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* CROPS images to fit perfectly without stretching */
+    object-fit: cover; 
     display: block;
 }
 
@@ -212,7 +212,7 @@
     flex-direction: column;
     gap: 10px;
     margin-bottom: 25px;
-    background: transparent; /* Remove old background if necessary */
+    background: transparent;
     padding: 0;
 }
 
@@ -292,7 +292,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 2px solid white; /* Makes it pop against the icon */
+    border: 2px solid white;
 }
 
 /* Hover effect*/
@@ -303,7 +303,7 @@
 .cart-sidebar {
     position: fixed;
     top: 0;
-    right: -400px; /* Hidden by default */
+    right: -400px;
     width: 400px;
     height: 100%;
     background: white;
@@ -412,4 +412,102 @@
 
 .terms-box button:hover {
     background: #80ABD9;
+}
+
+#checkout-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+}
+
+.checkout-container {
+    background: white;
+    margin: 5% auto;
+    padding: 30px;
+    width: 90%;
+    max-width: 450px; 
+    border-radius: 20px;
+    position: relative;
+    text-align: center;
+}
+
+/* --- THE SQUARE QR SLOT --- */
+.gcash-qr-placeholder {
+    width: 200px; 
+    height: 250px; 
+    margin: 20px auto; 
+    background: #f8f9fa;
+    border-radius: 12px;
+    overflow: hidden; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #eee;
+}
+
+
+.gcash-qr-placeholder img {
+    width: 100% !important; 
+    height: auto !important; 
+    object-fit: contain; 
+    display: block;
+}
+
+/* Payment Method Buttons */
+.method-selector { display: flex; gap: 10px; margin: 20px 0; }
+.method-option { flex: 1; cursor: pointer; }
+.method-option input { display: none; }
+
+.method-box {
+    padding: 15px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.method-option input:checked + .method-box {
+    border-color: var(--primary);
+    background: #fff9fa;
+    color: var(--primary);
+}
+
+/* Address Field */
+#delivery-address {
+    width: 100%; height: 80px;
+    padding: 10px; border-radius: 10px;
+    border: 1px solid #ddd; margin-top: 10px;
+}
+
+/* --- HOVER EFFECT ON CHECKOUT BUTTON --- */
+.confirm-payment-btn, .checkout-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.confirm-payment-btn:hover, .checkout-btn:hover {
+    background: #b96b86; /* Darker pink */
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(207, 139, 163, 0.4);
+}
+
+.close-checkout {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    z-index: 100;
 }
