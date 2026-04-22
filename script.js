@@ -254,9 +254,9 @@ document.querySelectorAll('input[name="pay-method"]').forEach(input => {
     };
 });
 
-// 4. Final Order Validation
 document.querySelector('.confirm-payment-btn').onclick = () => {
     const method = document.querySelector('input[name="pay-method"]:checked').value;
+
     if (method === 'cod') {
         const addr = document.getElementById('delivery-address').value;
         if (addr.length < 10) {
@@ -264,6 +264,9 @@ document.querySelector('.confirm-payment-btn').onclick = () => {
             return;
         }
     }
+
     alert("Order Received! Thank you for ordering from SarapNom.");
-    location.reload();
+
+    // 🔥 redirect to homepage
+    window.location.href = "index.html";
 };
