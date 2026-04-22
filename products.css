@@ -368,3 +368,48 @@
     font-weight: bold;
     cursor: pointer;
 }
+
+
+
+/* TERMS & CONDITION */
+
+.terms-popup {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.6);
+
+}
+
+.terms-box {
+    background: #fff;
+    width: 90%;
+    max-width: 400px;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+}
+
+.terms-box h2 {
+    margin-bottom: 15px;
+}
+
+.terms-box button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    background: #CF8BA3;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+
+}
+
+.terms-box button:hover {
+    background: #80ABD9;
+}

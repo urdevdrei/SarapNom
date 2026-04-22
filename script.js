@@ -154,3 +154,10 @@ function removeItem(id) {
     cart = cart.filter(item => item.id !== id);
     updateCartUI();
 }
+
+// TERMS AND CONDITION 
+
+document.getElementById("acceptBtn").addEventListener("click", function() {
+    document.getElementById("termsPopup").style.display = "none";
+    
+});
