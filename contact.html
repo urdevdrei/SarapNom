@@ -548,9 +548,15 @@
                             <textarea id="message" name="message" placeholder="Tell us about your sweet cravings..." required></textarea>
                         </div>
 
-                        <button type="submit" class="submit-btn">
+                        <button type="submit" class="submit-btn" id="contact-btn">
                             <i class="fas fa-paper-plane"></i> Send Message
                         </button>
+
+                        <script>
+                            document.getElementById("contact-btn").addEventListener("click", function(){
+                                alert("Message Sent Successfully!");
+                            });
+                        </script>
                     </form>
                 </div>
             </div>
