@@ -437,14 +437,14 @@
 
 /* --- THE SQUARE QR SLOT --- */
 .gcash-qr-placeholder {
-    width: 200px; 
+    width: 220px; 
     height: 250px; 
     margin: 20px auto; 
     background: #f8f9fa;
     border-radius: 12px;
     overflow: hidden; 
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     border: 1px solid #eee;
 }
