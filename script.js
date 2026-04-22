@@ -167,11 +167,27 @@ function removeItem(id) {
     updateCartUI();
 }
 
-// TERMS AND CONDITION 
+const acceptBtn = document.getElementById("acceptBtn");
+const checks = document.querySelectorAll(".terms-check");
 
-document.getElementById("acceptBtn").addEventListener("click", function() {
+function validateChecks() {
+    let allChecked = true;
+
+    checks.forEach(cb => {
+        if (!cb.checked) {
+            allChecked = false;
+        }
+    });
+
+    acceptBtn.disabled = !allChecked;
+}
+
+checks.forEach(cb => {
+    cb.addEventListener("change", validateChecks);
+});
+
+acceptBtn.addEventListener("click", function () {
     document.getElementById("termsPopup").style.display = "none";
-    
 });
 
 // --- CHECKOUT LOGIC ---

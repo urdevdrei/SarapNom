@@ -165,11 +165,25 @@
 <div class="terms-popup" id="termsPopup">
   <div class="terms-box">
     <h2>Terms & Conditions</h2>
-    <p>
-      By using this website, you agree to our Terms and Conditions.
-      Please read them carefully before continuing.
-    </p>
-    <button id="acceptBtn">I Agree</button>
+
+    <p class="terms-subtext">Please confirm the following before continuing:</p>
+
+    <div class="terms-item">
+      <input type="checkbox" class="terms-check" id="check1">
+      <label for="check1">I agree to shoulder the payment for the delivery fee.</label>
+    </div>
+
+    <div class="terms-item">
+      <input type="checkbox" class="terms-check" id="check2">
+      <label for="check2">I agree to provide correct delivery information.</label>
+    </div>
+
+    <div class="terms-item">
+      <input type="checkbox" class="terms-check" id="check3">
+      <label for="check3">I understand that orders cannot be cancelled once confirmed.</label>
+    </div>
+
+    <button id="acceptBtn" disabled>I Agree</button>
   </div>
 </div>
 
