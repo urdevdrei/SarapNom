@@ -270,3 +270,5 @@ document.querySelector('.confirm-payment-btn').onclick = () => {
     // 🔥 redirect to homepage
     window.location.href = "index.html";
 };
+
+
