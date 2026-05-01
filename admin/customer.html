@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SarapNom - Customers</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin-dashboard.css">
+    <style>
+        /* Additional styles for modals and notifications */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1050;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .modal.show {
+            display: block;
+            opacity: 1;
+        }
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            max-width: 500px;
+            border-radius: 12px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(-50px);
+            transition: transform 0.3s;
+        }
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success { background: #28a745; }
+        .notification.error { background: #dc3545; }
+        .notification.warning { background: #ffc107; color: #000; }
+        .table th[aria-sort] {
+            cursor: pointer;
+            position: relative;
+        }
+        .table th[aria-sort]::after {
+            content: '';
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+        }
+        .table th[aria-sort="ascending"]::after {
+            border-top: 5px solid #6c757d;
+        }
+        .table th[aria-sort="descending"]::after {
+            border-bottom: 5px solid #6c757d;
+        }
+        .filter-active {
+            background-color: #0d6efd !important;
+            color: white !important;
+        }
+        .avatar-sm {
+            width: 32px;
+            height: 32px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .avatar-lg {
+            width: 80px;
+            height: 80px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        .sidebar.collapsed {
+            width: 70px;
+        }
+        .sidebar.collapsed .nav-link span {
+            display: none;
+        }
+        .sidebar.collapsed .sidebar-header .logo span {
+            display: none;
+        }
+        .sidebar.collapsed .badge {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo">
+                <i class="fas fa-utensils"></i>
+                <span>SarapNom</span>
+            </a>
+        </div>
+        <nav>
+            <a href="admin-dashboard.html" class="nav-link">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="orders.html" class="nav-link">
+                <i class="fas fa-shopping-bag"></i>
+                <span>Orders</span>
+                <span class="badge bg-primary ms-auto">12</span>
+            </a>
+            <a href="products.html" class="nav-link">
+                <i class="fas fa-cookie-bite"></i>
+                <span>Products</span>
+            </a>
+            <a href="customers.html" class="nav-link active">
+                <i class="fas fa-users"></i>
+                <span>Customers</span>
+            </a>
+            <a href="settings.html" class="nav-link">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Top Navbar -->
+        <header class="top-navbar">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="sidebar-toggle d-lg-none btn btn-link p-0" id="sidebarToggle">
+                        <i class="fas fa-bars fs-4"></i>
+                    </button>
+                    <div>
+                        <h1 class="page-title">Customers</h1>
+                        <p class="page-subtitle">Manage your customer database</p>
+                    </div>
+                </div>
+                <div class="navbar-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search customers...">
+                    </div>
+                    <div class="user-profile d-flex align-items-center gap-2 ms-3">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" alt="Admin" class="avatar rounded-circle">
+                        <div>
+                            <div class="fw-600">Admin User</div>
+                            <small class="text-muted">Super Admin</small>
+                        </div>
+                        <i class="fas fa-chevron-down ms-2 text-muted"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="content">
+            <div class="container-fluid">
+                <!-- Stats Cards -->
+                <div class="stats-grid mb-4">
+                    <div class="stat-card stat-primary">
+                        <div class="stat-number" id="totalCustomers">-</div>
+                        <div class="stat-label">Total Customers</div>
+                    </div>
+                    <div class="stat-card stat-success">
+                        <div class="stat-number" id="activeCustomers">-</div>
+                        <div class="stat-label">Active (30 days)</div>
+                    </div>
+                    <div class="stat-card stat-accent">
+                        <div class="stat-number" id="totalRevenue">-</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="stat-card stat-info">
+                        <div class="stat-number" id="avgOrder">-</div>
+                        <div class="stat-label">Avg Order Value</div>
+                    </div>
+                </div>
+
+                <!-- Header Actions -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex gap-2" id="filterButtons">
+                        <button class="btn btn-outline-primary btn-sm filter-btn active" data-filter="all">All</button>
+                        <button class="btn btn-outline-primary btn-sm filter-btn" data-filter="vip">VIP</button>
+                        <button class="btn btn-outline-primary btn-sm filter-btn" data-filter="new">New</button>
+                    </div>
+                    <button class="btn btn-primary" data-modal="customerModal">
+                        <i class="fas fa-plus me-2"></i>Add Customer
+                    </button>
+                </div>
+
+                <!-- Customers Table -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Customer List</h5>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary btn-sm" data-export="csv">
+                                <i class="fas fa-download me-1"></i>Export CSV
+                            </button>
+                            <button class="btn btn-outline-primary btn-sm" data-export="excel">
+                                <i class="fas fa-file-excel me-1"></i>Excel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th data-sort="name" aria-sort="none" style="cursor: pointer;">
+                                        <i class="fas fa-user me-1"></i>Name
+                                    </th>
+                                    <th data-sort="email" aria-sort="none" style="cursor: pointer;">
+                                        <i class="fas fa-envelope me-1"></i>Email
+                                    </th>
+                                    <th data-sort="orders" aria-sort="descending" style="cursor: pointer;">
+                                        <i class="fas fa-shopping-bag me-1"></i>Orders
+                                    </th>
+                                    <th data-sort="totalSpent" aria-sort="descending" style="cursor: pointer;">
+                                        <i class="fas fa-peso-sign me-1"></i>Total Spent
+                                    </th>
+                                    <th data-sort="joined" aria-sort="none" style="cursor: pointer;">
+                                        <i class="fas fa-calendar me-1"></i>Joined
+                                    </th>
+                                    <th data-sort="status" aria-sort="none" style="cursor: pointer;">Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customersTable">
+                                <!-- Customers populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="customersPagination" class="card-footer d-flex justify-content-between align-items-center">
+                        <div id="paginationInfo"></div>
+                        <nav>
+                            <ul class="pagination pagination-sm mb-0" id="pagination"></ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Customer Modal -->
+    <div class="modal" id="customerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerModalTitle">Add New Customer</h5>
+                <button class="btn-close" type="button" data-action="close"></button>
+            </div>
+            <form id="customerForm" class="needs-validation" novalidate>
+                <div class="modal-body">
+                    <input type="hidden" id="customerId" name="id">
+                    <div class="mb-3">
+                        <label class="form-label">Full Name *</label>
+                        <input type="text" class="form-control" name="name" required>
+                        <div class="invalid-feedback">Please enter full name</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email *</label>
+                        <input type="email" class="form-control" name="email" required>
+                        <div class="invalid-feedback">Please enter valid email</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-control" name="phone">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-control" name="status">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="vip">VIP</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-action="cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>
+                        <span id="submitText">Save Customer</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Customer Details Modal -->
+    <div class="modal" id="customerDetailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Customer Details</h5>
+                <button class="btn-close" type="button" data-action="close"></button>
+            </div>
+            <div class="modal-body" id="customerDetailsBody">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ✅ FINAL FIXED DATA - 11 CUSTOMERS ✅
+        const SarapNomData = {
+            DATA: {
+                customers: [
+                    // Your original 4 customers
+                    { id: 1, name: 'Darren Molina', email: 'darren@example.com', phone: '+639123456789', orders: 12, totalSpent: 2450.50, joined: '2024-01-15', status: 'vip' },
+                    { id: 2, name: 'Dino Padilla', email: 'dino@example.com', phone: '+639987654321', orders: 8, totalSpent: 1560.00, joined: '2024-02-20', status: 'new' },
+                    { id: 3, name: 'Maria Santos', email: 'maria@example.com', phone: '+639876543210', orders: 15, totalSpent: 3780.75, joined: '2024-01-10', status: 'vip' },
+                    { id: 4, name: 'Andrei Santos', email: 'andrei@example.com', phone: '+639456789123', orders: 5, totalSpent: 1280.50, joined: '2024-03-05', status: 'new' },
+                    
+                    // Additional realistic customers
+                    { id: 5, name: 'Juan Dela Cruz', email: 'juan@example.com', phone: '+639123456789', orders: 22, totalSpent: 4560.25, joined: '2023-12-01', status: 'vip' },
+                    { id: 6, name: 'Pedro Reyes', email: 'pedro@example.com', phone: '+639876543210', orders: 7, totalSpent: 1890.75, joined: '2024-02-20', status: 'vip' },
+                    { id: 7, name: 'Ana Garcia', email: 'ana@example.com', phone: '', orders: 3, totalSpent: 750.25, joined: '2024-04-01', status: 'new' },
+                    { id: 8, name: 'Jose Lim', email: 'jose@example.com', phone: '+639456789123', orders: 18, totalSpent: 3560.00, joined: '2023-11-15', status: 'vip' },
+                    { id: 9, name: 'Luz Fernandez', email: 'luz@example.com', phone: '+639567891234', orders: 2, totalSpent: 420.00, joined: '2024-04-10', status: 'new' },
+                    { id: 10, name: 'Carlos Mendoza', email: 'carlos@example.com', phone: '+639111222333', orders: 11, totalSpent: 2980.00, joined: '2024-01-25', status: 'new' },
+                    { id: 11, name: 'Sofia Ramos', email: 'sofia@example.com', phone: '+639222333444', orders: 6, totalSpent: 1340.50, joined: '2024-03-15', status: 'new' }
+                ]
+            },
+            Utils: {
+                formatCurrency: (amount) => `₱${parseFloat(amount).toLocaleString('en-PH', { minimumFractionDigits: 2 })}`
+            }
+        };
+
+        console.log('✅ SarapNom Customers Loaded:', SarapNomData.DATA.customers.length, 'customers ready!');
+
+        // Global state
+        let currentSort = { column: 'orders', direction: 'desc' };
+        let currentFilter = 'all';
+        let filteredCustomers = [];
+        const customersPerPage = 5;
+        let currentPage = 1;
+        let searchTimeout;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 DOM Ready - Initializing...');
+            
+            filteredCustomers = [...SarapNomData.DATA.customers];
+            populateCustomersTable();
+            updateCustomerStats();
+            updatePagination();
+            updateSortIndicators();
+            
+            console.log('✅ Customers table populated:', filteredCustomers.length);
+            
+            // ✅ FIXED: Unified click delegation for ALL interactions
+            document.addEventListener('click', function(e) {
+                handleClicks(e);
+                handlePaginationClick(e);  // ✅ Pagination handler
+            });
+            
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', debounce(filterCustomers, 300));
+            
+            // Sidebar toggle
+            document.getElementById('sidebarToggle')?.addEventListener('click', toggleSidebar);
+            
+            // Form submission
+            document.getElementById('customerForm').addEventListener('submit', handleCustomerForm);
+            
+            console.log('🚀 Customers page fully loaded!');
+        });
+
+        // ✅ FIXED: Main click handler
+        function handleClicks(e) {
+            let target = e.target;
+            
+            if (target.closest('th[data-sort]')) {
+                const th = target.closest('th[data-sort]');
+                sortTable(th.dataset.sort);
+                return;
+            }
+            
+            if (target.matches('.filter-btn')) {
+                setFilter(target.dataset.filter);
+                return;
+            }
+            
+            if (target.matches('[data-modal]')) {
+                openModal(target.dataset.modal);
+                return;
+            }
+            if (target.matches('[data-action="close"], [data-action="cancel"]')) {
+                closeModal();
+                return;
+            }
+            
+            if (target.matches('[data-export]')) {
+                exportCustomers(target.dataset['export']);
+                return;
+            }
+            
+            if (target.matches('[data-action]') || target.closest('[data-action]')) {
+                const actionBtn = target.matches('[data-action]') ? target : target.closest('[data-action]');
+                const customerId = actionBtn.dataset.id;
+                
+                switch(actionBtn.dataset.action) {
+                    case 'edit':
+                        editCustomer(customerId);
+                        break;
+                    case 'view':
+                        viewCustomerDetails(customerId);
+                        break;
+                    case 'delete':
+                        deleteCustomer(customerId);
+                        break;
+                }
+                return;
+            }
+        }
+
+        // ✅ NEW: Pagination click handler
+        function handlePaginationClick(e) {
+            if (e.target.matches('#customersPagination .page-link')) {
+                e.preventDefault(); // Prevent default anchor behavior
+                const page = parseInt(e.target.dataset.page);
+                if (!isNaN(page) && page !== currentPage && page >= 1) {
+                    currentPage = page;
+                    populateCustomersTable();
+                    updatePagination();
+                    updateSortIndicators();
+                    console.log('📄 Page changed to:', currentPage);
+                }
+            }
+        }
+
+        function updateSortIndicators() {
+            document.querySelectorAll('th[data-sort]').forEach(th => {
+                th.setAttribute('aria-sort', 'none');
+            });
+            const sortTh = document.querySelector(`th[data-sort="${currentSort.column}"]`);
+            if (sortTh) {
+                sortTh.setAttribute('aria-sort', currentSort.direction);
+            }
+        }
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal.show').forEach(modal => {
+                modal.classList.remove('show');
+            });
+            document.body.style.overflow = '';
+            const form = document.getElementById('customerForm');
+            if (form) {
+                form.reset();
+                form.classList.remove('was-validated');
+                document.getElementById('customerId').value = '';
+                document.getElementById('customerModalTitle').textContent = 'Add New Customer';
+                document.getElementById('submitText').textContent = 'Save Customer';
+            }
+        }
+
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('filter-active', btn.dataset.filter === filter);
+                btn.classList.toggle('active', btn.dataset.filter === filter);
+            });
+            filterCustomers();
+        }
+
+        function filterCustomers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            filteredCustomers = SarapNomData.DATA.customers.filter(customer => {
+                const thirtyDaysAgo = new Date(Date.now() - 30*24*60*60*1000);
+                
+                const matchesFilter = currentFilter === 'all' || 
+                    customer.status === currentFilter || 
+                    (currentFilter === 'new' && new Date(customer.joined) > thirtyDaysAgo);
+                
+                const matchesSearch = !searchTerm || 
+                    customer.name.toLowerCase().includes(searchTerm) ||
+                    customer.email.toLowerCase().includes(searchTerm) ||
+                    (customer.phone && customer.phone.includes(searchTerm));
+                
+                return matchesFilter && matchesSearch;
+            });
+            
+            currentPage = 1;
+            populateCustomersTable();
+            updatePagination();
+            updateCustomerStats();
+        }
+
+        function sortTable(column) {
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort = { column, direction: 'asc' };
+            }
+            updateSortIndicators();
+            filteredCustomers.sort((a, b) => {
+                let valA = getSortValue(a, column);
+                let valB = getSortValue(b, column);
+                if (typeof valA === 'string') {
+                    valA = valA.toLowerCase();
+                    valB = valB.toLowerCase();
+                }
+                if (valA < valB) return currentSort.direction === 'asc' ? -1 : 1;
+                if (valA > valB) return currentSort.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+            populateCustomersTable();
+        }
+
+        function getSortValue(customer, column) {
+            switch(column) {
+                case 'name': return customer.name;
+                case 'email': return customer.email;
+                case 'orders': return customer.orders;
+                case 'totalSpent': return parseFloat(customer.totalSpent);
+                case 'joined': return new Date(customer.joined).getTime();
+                case 'status': return customer.status;
+                default: return '';
+            }
+        }
+
+        // ✅ FIXED: Pagination with proper page numbers
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredCustomers.length / customersPerPage);
+            const start = (currentPage - 1) * customersPerPage + 1;
+            const end = Math.min(currentPage * customersPerPage, filteredCustomers.length);
+            
+            document.getElementById('paginationInfo').textContent = 
+                `Showing ${start}-${end} of ${filteredCustomers.length} customers`;
+            
+            const pagination = document.getElementById('pagination');
+            let pagesHtml = `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${Math.max(1, currentPage - 1)}">Previous</a>
+            </li>`;
+            
+            if (totalPages > 0) {
+                const maxVisible = 5;
+                let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+                if (endPage - startPage < maxVisible - 1) {
+                    startPage = Math.max(1, endPage - maxVisible + 1);
+                }
+                
+                for (let i = startPage; i <= endPage; i++) {
+                    pagesHtml += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>`;
+                }
+            }
+            
+            pagesHtml += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                <a class="page-link" href="#" data-page="${Math.min(totalPages, currentPage + 1)}">Next</a>
+            </li>`;
+            
+            pagination.innerHTML = pagesHtml;
+        }
+
+        function populateCustomersTable() {
+            const tbody = document.getElementById('customersTable');
+            const start = (currentPage - 1) * customersPerPage;
+            const end = start + customersPerPage;
+            const pageCustomers = filteredCustomers.slice(start, end);
+            
+            tbody.innerHTML = pageCustomers.map(customer => `
+                <tr data-customer-id="${customer.id}">
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
+                                ${customer.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <div class="fw-600">${customer.name}</div>
+                                ${customer.phone ? `<div class="text-muted small">${customer.phone}</div>` : ''}
+                            </div>
+                        </div>
+                    </td>
+                    <td>${customer.email}</td>
+                    <td><span class="badge bg-success">${customer.orders}</span></td>
+                    <td>${SarapNomData.Utils.formatCurrency(customer.totalSpent)}</td>
+                    <td>${new Date(customer.joined).toLocaleDateString('en-PH')}</td>
+                    <td><span class="badge ${getCustomerStatusBadge(customer.status)}">${customer.status.toUpperCase()}</span></td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-sm btn-outline-primary" data-action="view" data-id="${customer.id}" title="View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-success" data-action="edit" data-id="${customer.id}" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" data-action="delete" data-id="${customer.id}" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getCustomerStatusBadge(status) {
+            const badges = {
+                active: 'bg-success',
+                vip: 'bg-warning text-dark',
+                inactive: 'bg-secondary',
+                new: 'bg-info'
+            };
+            return badges[status] || 'bg-secondary';
+        }
+
+        function updateCustomerStats() {
+            const customers = filteredCustomers.length > 0 ? filteredCustomers : SarapNomData.DATA.customers;
+            const totalCustomers = customers.length;
+            const thirtyDaysAgo = new Date(Date.now() - 30*24*60*60*1000);
+            const activeCustomers = customers.filter(c => new Date(c.joined) > thirtyDaysAgo).length;
+            const totalRevenue = customers.reduce((sum, c) => sum + parseFloat(c.totalSpent), 0);
+            const totalOrders = customers.reduce((sum, c) => sum + c.orders, 0);
+            const avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
+            document.getElementById('totalCustomers').textContent = totalCustomers.toLocaleString();
+            document.getElementById('activeCustomers').textContent = activeCustomers.toLocaleString();
+            document.getElementById('totalRevenue').textContent = SarapNomData.Utils.formatCurrency(totalRevenue);
+            document.getElementById('avgOrder').textContent = SarapNomData.Utils.formatCurrency(avgOrder);
+        }
+
+        // CRUD Functions
+        function editCustomer(id) {
+            const customer = SarapNomData.DATA.customers.find(c => c.id == id);
+            if (customer) {
+                document.getElementById('customerId').value = customer.id;
+                document.querySelector('[name="name"]').value = customer.name;
+                document.querySelector('[name="email"]').value = customer.email;
+                document.querySelector('[name="phone"]').value = customer.phone || '';
+                document.querySelector('[name="status"]').value = customer.status;
+                document.getElementById('customerModalTitle').textContent = 'Edit Customer';
+                document.getElementById('submitText').textContent = 'Update Customer';
+                openModal('customerModal');
+            }
+        }
+
+        function viewCustomerDetails(id) {
+            const customer = SarapNomData.DATA.customers.find(c => c.id == id);
+            if (customer) {
+                document.getElementById('customerDetailsBody').innerHTML = `
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-4">
+                            <div class="avatar-lg bg-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                                ${customer.name.charAt(0).toUpperCase()}
+                            </div>
+                            <h5>${customer.name}</h5>
+                            <span class="badge ${getCustomerStatusBadge(customer.status)}">${customer.status.toUpperCase()}</span>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="row g-3">
+                                <div class="col-6"><label class="fw-600 small text-muted">Email</label><div class="fw-500">${customer.email}</div></div>
+                                <div class="col-6"><label class="fw-600 small text-muted">Phone</label><div class="fw-500">${customer.phone || 'N/A'}</div></div>
+                                <div class="col-6"><label class="fw-600 small text-muted">Total Orders</label><div><strong class="text-success">${customer.orders}</strong></div></div>
+                                <div class="col-6"><label class="fw-600 small text-muted">Total Spent</label><div><strong>${SarapNomData.Utils.formatCurrency(customer.totalSpent)}</strong></div></div>
+                                <div class="col-6"><label class="fw-600 small text-muted">Joined</label><div>${new Date(customer.joined).toLocaleDateString('en-PH')}</div></div>
+                                <div class="col-6"><label class="fw-600 small text-muted">Status</label><div><span class="badge ${getCustomerStatusBadge(customer.status)}">${customer.status.toUpperCase()}</span></div></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                openModal('customerDetailsModal');
+            }
+        }
+
+        function deleteCustomer(id) {
+            // Create modern confirmation modal
+            const confirmModal = document.createElement('div');
+            confirmModal.className = 'modal show';
+            confirmModal.innerHTML = `
+                <div class="modal-content" style="max-width: 400px; margin: 15% auto;">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-exclamation-triangle text-danger me-2"></i>Confirm Delete</h5>
+                        <button class="btn-close" type="button" onclick="this.closest('.modal').remove()"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center mb-4">
+                            <div class="bg-danger bg-opacity-10 text-danger p-4 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <i class="fas fa-trash fs-1"></i>
+                            </div>
+                            <h5 class="mb-1">Delete Customer?</h5>
+                            <p class="text-muted mb-0">This action cannot be undone. Are you sure you want to delete this customer?</p>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-outline-secondary" onclick="this.closest('.modal').remove()">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="confirmDelete(${id}); this.closest('.modal').remove()">
+                            <i class="fas fa-trash me-1"></i>Yes, Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(confirmModal);
+            document.body.style.overflow = 'hidden';
+        }
+
+        // New confirm delete handler
+        function confirmDelete(id) {
+            const initialLength = SarapNomData.DATA.customers.length;
+            SarapNomData.DATA.customers = SarapNomData.DATA.customers.filter(c => c.id != id);
+            if (SarapNomData.DATA.customers.length < initialLength) {
+                filterCustomers();
+                showNotification('Customer deleted successfully!', 'success');
+            } else {
+                showNotification('Customer not found!', 'error');
+            }
+        }
+
+        function exportCustomers(format) {
+            const customers = filteredCustomers.length > 0 ? filteredCustomers : SarapNomData.DATA.customers;
+            let csvContent = "data:text/csv;charset=utf-8," + "\uFEFF";
+            csvContent += "Name,Email,Phone,Orders,Total Spent,Joined,Status\n";
+            customers.forEach(customer => {
+                csvContent += `"${customer.name.replace(/"/g, '""')}","${customer.email}","${customer.phone || ''}",${customer.orders},"${customer.totalSpent}","${customer.joined}","${customer.status}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `sarapnom-customers-${new Date().toISOString().split('T')[0]}.${format === 'excel' ? 'xlsx' : format}`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showNotification(`Customers exported as ${format.toUpperCase()} successfully!`, 'success');
+        }
+
+        function handleCustomerForm(e) {
+            e.preventDefault();
+            const form = e.target;
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                showNotification('Please fill in all required fields correctly!', 'error');
+                return;
+            }
+            const formData = new FormData(form);
+            const customerData = Object.fromEntries(formData);
+            const customerId = document.getElementById('customerId').value;
+            
+            if (customerId) {
+                const customerIndex = SarapNomData.DATA.customers.findIndex(c => c.id == customerId);
+                if (customerIndex !== -1) {
+                    SarapNomData.DATA.customers[customerIndex] = { 
+                        ...SarapNomData.DATA.customers[customerIndex], 
+                        ...customerData 
+                    };
+                    showNotification('Customer updated successfully!', 'success');
+                } else {
+                    showNotification('Customer not found!', 'error');
+                }
+            } else {
+                const newCustomer = {
+                    id: Date.now(),
+                    ...customerData,
+                    orders: 0,
+                    totalSpent: 0,
+                    joined: new Date().toISOString().split('T')[0]
+                };
+                SarapNomData.DATA.customers.push(newCustomer);
+                showNotification('Customer added successfully!', 'success');
+            }
+            closeModal();
+            filterCustomers();
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type} shadow-lg`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            requestAnimationFrame(() => notification.classList.add('show'));
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // Modal backdrop and ESC key handlers
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                closeModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
