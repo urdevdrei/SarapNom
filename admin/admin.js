@@ -156,13 +156,47 @@ function editProduct(id) {
     }
 }
 
+// Global variable to store product to delete
+let productToDelete = null;
+
 function deleteProduct(id) {
-    if (confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
-        products = products.filter(p => p.id !== id);
-        renderProducts();
-        showToast('Product deleted successfully!', 'success');
-    }
+    const product = products.find(p => p.id === id);
+    if (!product) return;
+    
+    // Store product data
+    productToDelete = product;
+    
+    // Update modal content
+    document.getElementById('productNameDelete').textContent = product.name;
+    document.getElementById('previewName').textContent = product.name;
+    document.getElementById('previewPrice').textContent = product.price.toLocaleString();
+    document.getElementById('previewStock').textContent = product.stock;
+    document.querySelector('.delete-avatar').textContent = getCategoryIcon(product.category);
+    document.getElementById('productPreview').style.display = 'block';
+    
+    // Show modal
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
 }
+
+// Confirm delete button handler
+document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
+    if (productToDelete) {
+        products = products.filter(p => p.id !== productToDelete.id);
+        renderProducts();
+        
+        // Shake animation on products table
+        const table = document.getElementById('productsTableBody');
+        table.classList.add('shake');
+        setTimeout(() => table.classList.remove('shake'), 500);
+        
+        // Close modal and show success toast
+        bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+        showToast(`"${productToDelete.name}" deleted successfully!`, 'success');
+        
+        productToDelete = null;
+    }
+});
 
 // Form Controls
 document.querySelector('[data-action="addProduct"]').addEventListener('click', () => {
