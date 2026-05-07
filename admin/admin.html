@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SarapNom Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fas fa-utensils me-2"></i>
+                <h3>SarapNom</h3>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" data-page="dashboard" class="nav-link active">
+                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+            </a>
+            <a href="#" data-page="products" class="nav-link">
+                <i class="fas fa-cookie-bite me-2"></i>Products
+            </a>
+            <a href="#" data-page="orders" class="nav-link">
+                <i class="fas fa-shopping-bag me-2"></i>Orders
+            </a>
+            <a href="#" data-page="customers" class="nav-link">
+                <i class="fas fa-users me-2"></i>Customers
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <header class="header">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-content">
+                <h1 id="pageTitle">Dashboard</h1>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search...">
+                </div>
+            </div>
+        </header>
+
+        <main id="mainContent">
+            <!-- DASHBOARD -->
+            <div id="dashboard" class="page-content active">
+                <div class="row g-4 mb-5">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card primary">
+                            <div class="stat-icon">
+                                <i class="fas fa-cookie-bite"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Products</div>
+                                <div class="number" data-target="24">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card success">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Orders</div>
+                                <div class="number" data-target="127">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card warning">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Customers</div>
+                                <div class="number" data-target="89">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card danger">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-label">Revenue</div>
+                                <div class="number" data-target="45230">₱0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-chart-bar me-2"></i>Recent Sales</h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="salesChart" height="100"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-clock me-2"></i>Quick Actions</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="quick-actions">
+                                    <button class="action-btn primary"><i class="fas fa-plus"></i>Add Product</button>
+                                    <button class="action-btn success"><i class="fas fa-file-invoice"></i>New Order</button>
+                                    <button class="action-btn warning"><i class="fas fa-users-cog"></i>Manage Users</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRODUCTS CRUD -->
+            <div id="products" class="page-content">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+                    <h2><i class="fas fa-cookie-bite text-primary me-2"></i>Products</h2>
+                    <button class="btn btn-primary" data-action="addProduct">
+                        <i class="fas fa-plus me-2"></i>Add Product
+                    </button>
+                </div>
+
+                <!-- ADD/EDIT FORM -->
+                <div class="card mb-4" id="productForm" style="display: none;">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 id="formTitle"><i class="fas fa-plus me-2"></i>Add Product</h5>
+                        <button class="btn-close" data-action="cancelForm"></button>
+                    </div>
+                    <div class="card-body">
+                        <form id="productFormData">
+                            <input type="hidden" id="productId">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">Product Name</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-tag"></i></span>
+                                        <input type="text" class="form-control" id="productName" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Price (₱)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">₱</span>
+                                        <input type="number" class="form-control" id="productPrice" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Stock</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-box"></i></span>
+                                        <input type="number" class="form-control" id="productStock" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Category</label>
+                                    <select class="form-select" id="productCategory" required>
+                                        <option value="">Select Category</option>
+                                        <option value="Cookies">🍪 Cookies</option>
+                                        <option value="Cakes">🎂 Cakes</option>
+                                        <option value="Brownies">🍫 Brownies</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Save Product
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" data-action="cancelForm">
+                                    <i class="fas fa-times me-2"></i>Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- PRODUCTS TABLE -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5><i class="fas fa-list me-2"></i>All Products</h5>
+                        <div class="table-actions">
+                            <select class="form-select form-select-sm">
+                                <option>Show 10</option>
+                                <option>Show 25</option>
+                                <option>Show 50</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Category</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORDERS -->
+            <div id="orders" class="page-content">
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between">
+                                <h5><i class="fas fa-shopping-bag me-2"></i>Recent Orders</h5>
+                                <span class="badge bg-primary fs-6">127 Total</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="table-light">
+                                        <tr><th>ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Date</th><th>Status</th></tr>
+                                    </thead>
+                                    <tbody id="ordersTable">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h5><i class="fas fa-chart-pie me-2"></i>Order Status</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="status-cards">
+                                    <div class="status-card completed">
+                                        <div class="status-number">85</div>
+                                        <div class="status-label">Completed</div>
+                                    </div>
+                                    <div class="status-card pending">
+                                        <div class="status-number">32</div>
+                                        <div class="status-label">Pending</div>
+                                    </div>
+                                    <div class="status-card cancelled">
+                                        <div class="status-number">10</div>
+                                        <div class="status-label">Cancelled</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CUSTOMERS -->
+            <div id="customers" class="page-content">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between">
+                        <h5><i class="fas fa-users me-2"></i>Customers</h5>
+                        <span class="badge bg-success fs-6">89 Total</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="table-light">
+                                <tr><th>Customer</th><th>Email</th><th>Orders</th><th>Total Spent</th><th>Last Order</th></tr>
+                            </thead>
+                            <tbody id="customersTable">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
