@@ -1,5 +1,11 @@
-// --- 1. MOBILE MENU LOGIC ---
-// We declare these once at the very top
+// ============================================
+// COMPLETE SCRIPT.JS FOR SARAPNOM
+// Combines home page + products page functionality
+// ============================================
+
+// --- 0. HOME PAGE FUNCTIONALITY ---
+
+// Mobile Menu Toggle (works on all pages)
 const navToggle = document.querySelector('.nav-toggle');
 const navMenu = document.querySelector('.nav-menu');
 
@@ -7,9 +13,90 @@ if (navToggle && navMenu) {
     navToggle.addEventListener('click', () => {
         navMenu.classList.toggle('active');
     });
+
+    // Close mobile menu when clicking on a link
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+        });
+    });
 }
 
-// --- 2. PRODUCT MODAL DATA ---
+// Navbar background on scroll (home page)
+window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (navbar && window.scrollY > 100) {
+        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+        navbar.style.boxShadow = '0 15px 40px rgba(0,0,0,0.15)';
+    } else if (navbar) {
+        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+        navbar.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+    }
+});
+
+// Active nav link on scroll (home page)
+window.addEventListener('scroll', () => {
+    let current = '';
+    const sections = document.querySelectorAll('section');
+    
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        if (scrollY >= (sectionTop - 200)) {
+            current = section.getAttribute('id');
+        }
+    });
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}` || link.textContent.trim() === 'Home') {
+            link.classList.add('active');
+        }
+    });
+});
+
+// Deal of the Day Timer (home page only)
+function updateTimer() {
+    const timerElements = document.getElementById('hours') || 
+                         document.getElementById('minutes') || 
+                         document.getElementById('seconds');
+    
+    if (!timerElements) return; // Skip if not on home page
+    
+    const dealEndTime = new Date();
+    dealEndTime.setHours(dealEndTime.getHours() + 24);
+    
+    const now = new Date().getTime();
+    const distance = dealEndTime.getTime() - now;
+    
+    const hours = Math.floor(distance / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    const hoursEl = document.getElementById('hours');
+    const minutesEl = document.getElementById('minutes');
+    const secondsEl = document.getElementById('seconds');
+    
+    if (hoursEl) hoursEl.textContent = hours.toString().padStart(2, '0');
+    if (minutesEl) minutesEl.textContent = minutes.toString().padStart(2, '0');
+    if (secondsEl) secondsEl.textContent = seconds.toString().padStart(2, '0');
+    
+    if (distance < 0) {
+        const dealBtn = document.querySelector('.deal-button');
+        if (dealBtn) {
+            dealBtn.innerHTML = 'Deal Expired! <i class="fas fa-clock"></i>';
+            dealBtn.style.background = '#999';
+            dealBtn.style.cursor = 'not-allowed';
+        }
+    }
+}
+
+// Initialize timer (runs on all pages but only affects home)
+setInterval(updateTimer, 1000);
+updateTimer();
+
+// --- 1. YOUR EXISTING PRODUCTS PAGE FUNCTIONALITY ---
+
+// PRODUCT MODAL DATA
 const productInfo = {
     "dubai": {
         title: "Dubai Chewy Chocolate",
@@ -32,8 +119,8 @@ const productInfo = {
     "banana": {
         title: "Banana Loaf Bread (Small Tub, 2-3 pax)",
         img: "product images/bananaloaf.jpg",
-        desc: "Baked fresh daily! Our moist banana bread is packed with rich chocolate chips, almonds, and Biscoff Cheesecake!.",
-        prices: ["Banana load with chocolate and almonds: ₱200", "Banana loaf with Biscoff Cheesecake & chocolate chips: ₱230"]
+        desc: "Baked fresh daily! Our moist banana bread is packed with rich chocolate chips, almonds, and Biscoff Cheesecake!",
+        prices: ["Banana loaf with chocolate and almonds: ₱200", "Banana loaf with Biscoff Cheesecake & chocolate chips: ₱230"]
     },
     "brownies": {
         title: "Fudgy Brownies (Box, 8x8 size)",
@@ -49,96 +136,109 @@ const productInfo = {
     }
 };
 
-// --- 3. MODAL ELEMENT SELECTORS ---
+// MODAL ELEMENT SELECTORS
 const modal = document.getElementById("productModal");
 const closeModal = document.querySelector(".close-modal");
 
-// --- 4. CLICK LOGIC ---
+// PRODUCT CARD CLICK LOGIC
 document.querySelectorAll('.product-card').forEach(card => {
-    card.style.cursor = "pointer";
-    card.addEventListener('click', function() {
-        const productId = this.getAttribute('data-product');
-        const data = productInfo[productId];
+    if (card) {
+        card.style.cursor = "pointer";
+        card.addEventListener('click', function() {
+            const productId = this.getAttribute('data-product');
+            const data = productInfo[productId];
 
-        if (data) {
-            document.getElementById("modalTitle").innerText = data.title;
-            document.getElementById("modalImg").src = data.img;
-            document.getElementById("modalDescription").innerText = data.desc;
-            
-            const priceList = document.getElementById("modalPriceList");
-            // Clears old prices and adds new ones
-    priceList.innerHTML = data.prices.map((p, index) => {
-        const label = p.split(':')[0].trim();
-        const cost = p.split(':')[1].trim();
-        return `
-            <label class="price-option">
-                <input type="radio" name="product-size" value="${label}" ${index === 0 ? 'checked' : ''}>
-                <div class="option-content">
-                    <span class="option-label">${label}</span>
-                    <span class="option-cost">${cost}</span>
-            </div>
-        </label>
-    `;
-    }).join('');
-            
-            modal.style.display = "block";
-        }
-    });
+            if (data && modal) {
+                document.getElementById("modalTitle").innerText = data.title;
+                document.getElementById("modalImg").src = data.img;
+                document.getElementById("modalDescription").innerText = data.desc;
+                
+                const priceList = document.getElementById("modalPriceList");
+                priceList.innerHTML = data.prices.map((p, index) => {
+                    const label = p.split(':')[0].trim();
+                    const cost = p.split(':')[1].trim();
+                    return `
+                        <label class="price-option">
+                            <input type="radio" name="product-size" value="${label}" ${index === 0 ? 'checked' : ''}>
+                            <div class="option-content">
+                                <span class="option-label">${label}</span>
+                                <span class="option-cost">${cost}</span>
+                            </div>
+                        </label>
+                    `;
+                }).join('');
+                
+                modal.style.display = "block";
+            }
+        });
+    }
 });
 
-// Close button (X)
-if (closeModal) {
+// Close product modal
+if (closeModal && modal) {
     closeModal.onclick = () => {
         modal.style.display = "none";
     };
 }
 
-// Close if clicking outside the white box
-window.onclick = (event) => {
-    if (event.target == modal) {
+// Close modal if clicking outside
+window.addEventListener('click', (event) => {
+    if (event.target === modal) {
         modal.style.display = "none";
     }
-};
+});
 
+// --- 2. CART FUNCTIONALITY ---
 let cart = [];
 
-// Function to Open/Close Cart
-document.getElementById('cart-btn').onclick = () => document.getElementById('cart-sidebar').classList.add('active');
-document.querySelector('.close-cart').onclick = () => document.getElementById('cart-sidebar').classList.remove('active');
+// Cart toggle
+const cartBtn = document.getElementById('cart-btn');
+const cartSidebar = document.getElementById('cart-sidebar');
+if (cartBtn && cartSidebar) {
+    cartBtn.onclick = () => cartSidebar.classList.add('active');
+}
 
-// ADD TO CART FUNCTION
-document.querySelector('.modal-buy').addEventListener('click', () => {
-    const selectedOption = document.querySelector('input[name="product-size"]:checked');
-    const productName = document.getElementById('modalTitle').innerText;
-    const productImg = document.getElementById('modalImg').src;
+const closeCart = document.querySelector('.close-cart');
+if (closeCart && cartSidebar) {
+    closeCart.onclick = () => cartSidebar.classList.remove('active');
+}
 
-    if (selectedOption) {
-        // Extract price number: "₱349" -> 349
-        const priceText = selectedOption.parentElement.querySelector('.option-cost').innerText;
-        const price = parseInt(priceText.replace('₱', ''));
-        const sizeLabel = selectedOption.value;
+// Add to cart from modal
+const modalBuyBtn = document.querySelector('.modal-buy');
+if (modalBuyBtn) {
+    modalBuyBtn.addEventListener('click', () => {
+        const selectedOption = document.querySelector('input[name="product-size"]:checked');
+        const productName = document.getElementById('modalTitle')?.innerText;
 
-        const item = {
-            id: Date.now(),
-            name: productName,
-            size: sizeLabel,
-            price: price,
-            img: productImg
-        };
+        if (selectedOption && productName) {
+            const priceText = selectedOption.parentElement.querySelector('.option-cost').innerText;
+            const price = parseInt(priceText.replace('₱', ''));
+            const sizeLabel = selectedOption.value;
+            const productImg = document.getElementById('modalImg')?.src;
 
-        cart.push(item);
-        updateCartUI();
-        
-        // Visual feedback
-        document.getElementById('productModal').style.display = "none";
-        document.getElementById('cart-sidebar').classList.add('active');
-    }
-});
+            const item = {
+                id: Date.now(),
+                name: productName,
+                size: sizeLabel,
+                price: price,
+                img: productImg
+            };
+
+            cart.push(item);
+            updateCartUI();
+            
+            modal.style.display = "none";
+            if (cartSidebar) cartSidebar.classList.add('active');
+        }
+    });
+}
 
 function updateCartUI() {
     const container = document.getElementById('cart-items');
     const totalEl = document.getElementById('total-price');
     const countEl = document.getElementById('cart-count');
+    
+    if (!container) return;
     
     container.innerHTML = "";
     let total = 0;
@@ -158,8 +258,8 @@ function updateCartUI() {
         `;
     });
 
-    totalEl.innerText = `₱${total}.00`;
-    countEl.innerText = cart.length;
+    if (totalEl) totalEl.innerText = `₱${total}.00`;
+    if (countEl) countEl.innerText = cart.length;
 }
 
 function removeItem(id) {
@@ -167,108 +267,104 @@ function removeItem(id) {
     updateCartUI();
 }
 
+// --- 3. TERMS & CONDITIONS ---
 const acceptBtn = document.getElementById("acceptBtn");
 const checks = document.querySelectorAll(".terms-check");
 
-function validateChecks() {
-    let allChecked = true;
+if (acceptBtn && checks.length > 0) {
+    function validateChecks() {
+        let allChecked = true;
+        checks.forEach(cb => {
+            if (!cb.checked) allChecked = false;
+        });
+        acceptBtn.disabled = !allChecked;
+    }
 
-    checks.forEach(cb => {
-        if (!cb.checked) {
-            allChecked = false;
-        }
+    checks.forEach(cb => cb.addEventListener("change", validateChecks));
+    acceptBtn.addEventListener("click", () => {
+        document.getElementById("termsPopup").style.display = "none";
     });
-
-    acceptBtn.disabled = !allChecked;
 }
 
-checks.forEach(cb => {
-    cb.addEventListener("change", validateChecks);
-});
-
-acceptBtn.addEventListener("click", function () {
-    document.getElementById("termsPopup").style.display = "none";
-});
-
-// --- CHECKOUT LOGIC ---
+// --- 4. CHECKOUT FUNCTIONALITY ---
 const checkoutModal = document.getElementById('checkout-modal');
 const closeCheckout = document.querySelector('.close-checkout');
-
-// Function to open checkout
-document.querySelector('.checkout-btn').addEventListener('click', () => {
-    if (cart.length === 0) {
-        alert("Your bag is empty!");
-        return;
-    }
-    
-    // Close the cart sidebar
-    document.getElementById('cart-sidebar').classList.remove('active');
-    
-    // Populate the checkout list
-    const listContainer = document.getElementById('checkout-items-list');
-    let total = 0;
-    
-    listContainer.innerHTML = cart.map(item => {
-        total += item.price;
-        return `
-            <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                <span>${item.name} (${item.size})</span>
-                <span>₱${item.price}</span>
-            </div>
-        `;
-    }).join('');
-    
-    document.getElementById('checkout-final-amount').innerText = `₱${total}.00`;
-    
-    // Show the modal
-    checkoutModal.style.display = "block";
-});
-
-// Close checkout modal
-closeCheckout.onclick = () => checkoutModal.style.display = "none";
-
-window.onclick = (event) => {
-    if (event.target == checkoutModal) checkoutModal.style.display = "none";
-};
-
-// 1. Open Checkout Modal from Cart
 const checkoutBtn = document.querySelector('.checkout-btn');
-if (checkoutBtn) {
-    checkoutBtn.onclick = () => {
-        document.getElementById('cart-sidebar').classList.remove('active');
-        document.getElementById('checkout-modal').style.display = 'block';
-    };
-}
 
-// 2. Close Checkout Modal
-document.querySelector('.close-checkout').onclick = () => {
-    document.getElementById('checkout-modal').style.display = 'none';
-};
-
-// 3. Toggle Payment Method Logic
-document.querySelectorAll('input[name="pay-method"]').forEach(input => {
-    input.onchange = () => {
-        const method = input.value;
-        document.getElementById('gcash-area').style.display = (method === 'gcash') ? 'block' : 'none';
-        document.getElementById('address-area').style.display = (method === 'cod') ? 'block' : 'none';
-    };
-});
-
-document.querySelector('.confirm-payment-btn').onclick = () => {
-    const method = document.querySelector('input[name="pay-method"]:checked').value;
-
-    if (method === 'cod') {
-        const addr = document.getElementById('delivery-address').value;
-        if (addr.length < 10) {
-            alert("Please provide a delivery address for COD.");
+if (checkoutBtn && checkoutModal) {
+    checkoutBtn.addEventListener('click', () => {
+        if (cart.length === 0) {
+            alert("Your bag is empty!");
             return;
         }
+        
+        const cartSidebar = document.getElementById('cart-sidebar');
+        if (cartSidebar) cartSidebar.classList.remove('active');
+        
+        const listContainer = document.getElementById('checkout-items-list');
+        let total = 0;
+        
+        if (listContainer) {
+            listContainer.innerHTML = cart.map(item => {
+                total += item.price;
+                return `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <span>${item.name} (${item.size})</span>
+                        <span>₱${item.price}</span>
+                    </div>
+                `;
+            }).join('');
+            
+            const finalAmountEl = document.getElementById('checkout-final-amount');
+            if (finalAmountEl) finalAmountEl.innerText = `₱${total}.00`;
+        }
+        
+        checkoutModal.style.display = "block";
+    });
+}
+
+if (closeCheckout && checkoutModal) {
+    closeCheckout.onclick = () => checkoutModal.style.display = "none";
+}
+
+window.addEventListener('click', (event) => {
+    if (event.target === checkoutModal) checkoutModal.style.display = "none";
+});
+
+// Payment method toggle
+document.querySelectorAll('input[name="pay-method"]').forEach(input => {
+    if (input) {
+        input.onchange = () => {
+            const method = input.value;
+            const gcashArea = document.getElementById('gcash-area');
+            const addressArea = document.getElementById('address-area');
+            
+            if (gcashArea) gcashArea.style.display = (method === 'gcash') ? 'block' : 'none';
+            if (addressArea) addressArea.style.display = (method === 'cod') ? 'block' : 'none';
+        };
     }
+});
 
-    alert("Order Received! Thank you for ordering from SarapNom.");
+const confirmPaymentBtn = document.querySelector('.confirm-payment-btn');
+if (confirmPaymentBtn) {
+    confirmPaymentBtn.onclick = () => {
+        const method = document.querySelector('input[name="pay-method"]:checked');
+        if (method && method.value === 'cod') {
+            const addr = document.getElementById('delivery-address');
+            if (addr && addr.value.length < 10) {
+                alert("Please provide a delivery address for COD.");
+                return;
+            }
+        }
 
-    // 🔥 redirect to homepage
-    window.location.href = "index.html";
-};
-
+        alert("Order Received! Thank you for ordering from SarapNom. We'll contact you soon!");
+        cart = []; // Clear cart
+        updateCartUI();
+        
+        // Redirect to homepage
+        setTimeout(() => {
+            window.location.href = "index.html";
+        }, 1500);
+    };
+}
 

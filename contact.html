@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        
         * {
             margin: 0;
             padding: 0;
@@ -28,9 +29,12 @@
             --light: #f8f9fa;
             --white: #ffffff;
             --shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
         }
 
-        /* NAVBAR */
+        /* All your existing navbar, hero, and other styles remain exactly the same */
         .navbar {
             position: fixed;
             top: 0;
@@ -285,8 +289,10 @@
             background: linear-gradient(90deg, var(--primary), var(--secondary));
         }
 
+        /* NEW VALIDATION STYLES */
         .form-group {
             margin-bottom: 2.2rem;
+            position: relative;
         }
 
         .form-group label {
@@ -322,6 +328,44 @@
         .form-group textarea {
             resize: vertical;
             min-height: 140px;
+        }
+
+        /* Validation visual feedback */
+        .form-group.valid input,
+        .form-group.valid textarea {
+            border-color: var(--success);
+            background: #f8fff8;
+        }
+
+        .form-group.invalid input,
+        .form-group.invalid textarea {
+            border-color: var(--danger);
+            background: #fff5f5;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+            font-weight: 500;
+        }
+
+        .error-message.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .submit-btn {
@@ -362,7 +406,54 @@
             box-shadow: 0 20px 40px rgba(207, 139, 163, 0.4);
         }
 
-        
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .submit-btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid transparent;
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, var(--success), #20c997);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            font-weight: 600;
+            margin-top: 1rem;
+            display: none;
+            animation: slideIn 0.5s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Your existing media queries */
         @media (max-width: 768px) {
             .nav-toggle-label {
                 display: flex;
@@ -393,7 +484,6 @@
                 visibility: visible;
             }
 
-           
             #nav-toggle:checked ~ .nav-toggle-label span:nth-child(1) {
                 transform: rotate(45deg) translate(5px, 5px);
             }
@@ -449,13 +539,13 @@
     </style>
 </head>
 <body>
+    
     <nav class="navbar">
         <div class="nav-container">
             <a href="index.html" class="navbar-brand">
                 <i class="fas fa-utensils"></i> SarapNom
             </a>
             
-           
             <input type="checkbox" id="nav-toggle" class="nav-toggle">
             <label for="nav-toggle" class="nav-toggle-label">
                 <span></span>
@@ -527,40 +617,176 @@
                 </div>
 
                 <div class="contact-form">
-                    <form>
-                        <div class="form-group">
+                    <form id="contactForm">
+                        <div class="form-group" id="nameGroup">
                             <label for="name">Full Name</label>
                             <input type="text" id="name" name="name" required>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" id="emailGroup">
                             <label for="email">Email Address</label>
                             <input type="email" id="email" name="email" required>
+                            <div class="error-message" id="emailError">Please enter a valid email address</div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" id="subjectGroup">
                             <label for="subject">Subject</label>
                             <input type="text" id="subject" name="subject" required>
+                            <div class="error-message" id="subjectError">Subject must be at least 3 characters long</div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" id="messageGroup">
                             <label for="message">Message</label>
                             <textarea id="message" name="message" placeholder="Tell us about your sweet cravings..." required></textarea>
+                            <div class="error-message" id="messageError">Message must be at least 10 characters long</div>
                         </div>
 
                         <button type="submit" class="submit-btn" id="contact-btn">
                             <i class="fas fa-paper-plane"></i> Send Message
                         </button>
 
-                        <script>
-                            document.getElementById("contact-btn").addEventListener("click", function(){
-                                alert("Message Sent Successfully!");
-                            });
-                        </script>
+                        <div class="success-message" id="successMessage">
+                            <i class="fas fa-check-circle"></i> Message sent successfully! We'll get back to you soon.
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </section>
+
+    <script>
+        class ContactFormValidator {
+            constructor() {
+                this.form = document.getElementById('contactForm');
+                this.nameInput = document.getElementById('name');
+                this.emailInput = document.getElementById('email');
+                this.subjectInput = document.getElementById('subject');
+                this.messageInput = document.getElementById('message');
+                this.submitBtn = document.getElementById('contact-btn');
+                this.successMessage = document.getElementById('successMessage');
+
+                this.formGroups = {
+                    email: document.getElementById('emailGroup'),
+                    subject: document.getElementById('subjectGroup'),
+                    message: document.getElementById('messageGroup')
+                };
+
+                this.errorMessages = {
+                    email: document.getElementById('emailError'),
+                    subject: document.getElementById('subjectError'),
+                    message: document.getElementById('messageError')
+                };
+
+                this.init();
+            }
+
+            init() {
+                // Real-time validation on input
+                this.emailInput.addEventListener('input', () => this.validateEmail());
+                this.subjectInput.addEventListener('input', () => this.validateSubject());
+                this.messageInput.addEventListener('input', () => this.validateMessage());
+
+                // Form submission
+                this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+            }
+
+            validateEmail() {
+                const email = this.emailInput.value.trim();
+                const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+                
+                this.toggleFieldState('email', isValid);
+                return isValid;
+            }
+
+            validateSubject() {
+                const subject = this.subjectInput.value.trim();
+                const isValid = subject.length >= 3;
+                
+                this.toggleFieldState('subject', isValid);
+                return isValid;
+            }
+
+            validateMessage() {
+                const message = this.messageInput.value.trim();
+                const isValid = message.length >= 10;
+                
+                this.toggleFieldState('message', isValid);
+                return isValid;
+            }
+
+            toggleFieldState(field, isValid) {
+                const group = this.formGroups[field];
+                const errorMsg = this.errorMessages[field];
+
+                if (isValid) {
+                    group.classList.remove('invalid');
+                    group.classList.add('valid');
+                    errorMsg.classList.remove('show');
+                } else {
+                    group.classList.remove('valid');
+                    group.classList.add('invalid');
+                    errorMsg.classList.add('show');
+                }
+            }
+
+            validateForm() {
+                const isEmailValid = this.validateEmail();
+                const isSubjectValid = this.validateSubject();
+                const isMessageValid = this.validateMessage();
+
+                return isEmailValid && isSubjectValid && isMessageValid;
+            }
+
+            handleSubmit(e) {
+                e.preventDefault();
+
+                if (!this.validateForm()) {
+                    this.shakeForm();
+                    return;
+                }
+
+                // Simulate form submission
+                this.submitBtn.disabled = true;
+                this.submitBtn.classList.add('loading');
+                this.submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+                // API call delay
+                setTimeout(() => {
+                    this.submitBtn.disabled = false;
+                    this.submitBtn.classList.remove('loading');
+                    this.submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+                    
+                    // Show success message
+                    this.successMessage.classList.add('show');
+                    
+                    // Reset form
+                    this.form.reset();
+                    Object.values(this.formGroups).forEach(group => {
+                        group.classList.remove('valid', 'invalid');
+                    });
+                    Object.values(this.errorMessages).forEach(msg => {
+                        msg.classList.remove('show');
+                    });
+
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        this.successMessage.classList.remove('show');
+                    }, 5000);
+                }, 2000);
+            }
+
+            shakeForm() {
+                this.form.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => {
+                    this.form.style.animation = '';
+                }, 500);
+            }
+        }
+
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            new ContactFormValidator();
+        });
+    </script>
 </body>
 </html>
