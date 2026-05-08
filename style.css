@@ -477,19 +477,20 @@ body {
     position: absolute;
     top: 20px;
     right: 20px;
-    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    background: linear-gradient(45deg, #4ecdc4, #44a08d);
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 50px;
     font-weight: 700;
     font-size: 0.9rem;
-    box-shadow: 0 5px 15px rgba(255,107,107,0.4);
-    animation: pulse 2s infinite;
+    box-shadow: 0 5px 15px rgba(78,205,196,0.4);
+    animation: bounce 2s infinite;
 }
 
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-10px); }
+    60% { transform: translateY(-5px); }
 }
 
 .deal-content {
@@ -507,8 +508,55 @@ body {
     font-weight: 700;
 }
 
-.deal-prices {
+.bogo-highlight {
+    background: linear-gradient(135deg, #4ecdc4, #44a08d);
+    color: white;
+    padding: 1.2rem;
+    border-radius: 16px;
     margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    box-shadow: 0 10px 30px rgba(78,205,196,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.bogo-highlight::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.bogo-highlight .highlight-text {
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.bogo-highlight i {
+    font-size: 1.8rem;
+    animation: bounceIn 1s infinite;
+}
+
+@keyframes bounceIn {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
 }
 
 .original-price {
@@ -516,6 +564,7 @@ body {
     color: #999;
     text-decoration: line-through;
     margin-right: 1rem;
+    display: block;
 }
 
 .deal-price {
@@ -525,6 +574,7 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    display: block;
 }
 
 .deal-highlight {
@@ -549,7 +599,7 @@ body {
 
 .deal-button {
     display: inline-block;
-    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    background: linear-gradient(45deg, #4ecdc4, #44a08d);
     color: white;
     padding: 16px 40px;
     border-radius: 50px;
@@ -558,13 +608,13 @@ body {
     text-decoration: none;
     text-align: center;
     transition: all 0.3s ease;
-    box-shadow: 0 10px 30px rgba(207,139,163,0.4);
+    box-shadow: 0 10px 30px rgba(78,205,196,0.4);
     align-self: flex-start;
 }
 
 .deal-button:hover {
     transform: translateY(-3px);
-    box-shadow: 0 20px 40px rgba(207,139,163,0.5);
+    box-shadow: 0 20px 40px rgba(78,205,196,0.5);
     color: white;
     text-decoration: none;
 }
@@ -587,5 +637,13 @@ body {
 @media (max-width: 480px) {
     .deal-content {
         padding: 2rem 1.5rem;
+    }
+    
+    .bogo-highlight {
+        padding: 1rem;
+    }
+    
+    .bogo-highlight .highlight-text {
+        font-size: 1.1rem;
     }
 }
