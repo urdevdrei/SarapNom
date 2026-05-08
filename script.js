@@ -269,22 +269,16 @@ function removeItem(id) {
 
 // --- 3. TERMS & CONDITIONS ---
 const acceptBtn = document.getElementById("acceptBtn");
-const checks = document.querySelectorAll(".terms-check");
+const agreeCheck = document.getElementById("agreeAll");
 
-if (acceptBtn && checks.length > 0) {
-    function validateChecks() {
-        let allChecked = true;
-        checks.forEach(cb => {
-            if (!cb.checked) allChecked = false;
-        });
-        acceptBtn.disabled = !allChecked;
-    }
+agreeCheck.addEventListener("change", () => {
+    acceptBtn.disabled = !agreeCheck.checked;
+});
 
-    checks.forEach(cb => cb.addEventListener("change", validateChecks));
-    acceptBtn.addEventListener("click", () => {
-        document.getElementById("termsPopup").style.display = "none";
-    });
-}
+acceptBtn.addEventListener("click", () => {
+    document.getElementById("termsPopup").style.display = "none";
+});
+
 
 // --- 4. CHECKOUT FUNCTIONALITY ---
 const checkoutModal = document.getElementById('checkout-modal');
@@ -332,39 +326,120 @@ window.addEventListener('click', (event) => {
 });
 
 // Payment method toggle
-document.querySelectorAll('input[name="pay-method"]').forEach(input => {
-    if (input) {
-        input.onchange = () => {
-            const method = input.value;
-            const gcashArea = document.getElementById('gcash-area');
-            const addressArea = document.getElementById('address-area');
-            
-            if (gcashArea) gcashArea.style.display = (method === 'gcash') ? 'block' : 'none';
-            if (addressArea) addressArea.style.display = (method === 'cod') ? 'block' : 'none';
-        };
-    }
-});
+document.querySelector('.confirm-payment-btn').onclick = () => {
 
-const confirmPaymentBtn = document.querySelector('.confirm-payment-btn');
-if (confirmPaymentBtn) {
-    confirmPaymentBtn.onclick = () => {
-        const method = document.querySelector('input[name="pay-method"]:checked');
-        if (method && method.value === 'cod') {
-            const addr = document.getElementById('delivery-address');
-            if (addr && addr.value.length < 10) {
-                alert("Please provide a delivery address for COD.");
-                return;
-            }
+    const method = document.querySelector('input[name="pay-method"]:checked').value;
+
+    const address = document.getElementById('delivery-address');
+    const receiptFile = document.getElementById('payment-receipt');
+
+    // VALIDATION
+    if (method === 'cod') {
+        if (!address.value || address.value.length < 10) {
+            alert("Please enter a complete delivery address.");
+            return;
         }
+    }
 
-        alert("Order Received! Thank you for ordering from SarapNom. We'll contact you soon!");
-        cart = []; // Clear cart
-        updateCartUI();
-        
-        // Redirect to homepage
-        setTimeout(() => {
-            window.location.href = "index.html";
-        }, 1500);
-    };
+    if (method === 'gcash') {
+        if (receiptFile.files.length === 0) {
+            alert("Please upload your GCash proof of payment.");
+            return;
+        }
+    }
+
+    // BUILD RECEIPT
+    const receiptDetails = document.getElementById('receipt-details');
+
+    let total = 0;
+
+    let itemsHTML = cart.map(item => {
+        total += item.price;
+
+        return `
+            <div style="margin-bottom:10px;">
+                <strong>${item.name}</strong><br>
+                ${item.size}<br>
+                ₱${item.price}
+            </div>
+        `;
+    }).join('');
+
+    const orderNumber = Math.floor(Math.random() * 900000 + 100000);
+
+    let deliveryInfo = "";
+
+    if (method === "cod") {
+        deliveryInfo = "Delivery (COD)";
+    } else if (method === "gcash") {
+        deliveryInfo = "GCash Paid (Online)";
+    } else {
+        deliveryInfo = "Pickup at Store";
+    }
+
+    receiptDetails.innerHTML = `
+        <p><strong>Order #:</strong> ${orderNumber}</p>
+        <hr>
+
+        ${itemsHTML}
+
+        <hr>
+
+        <p><strong>Payment Method:</strong> ${method.toUpperCase()}</p>
+        <p><strong>Order Type:</strong> ${deliveryInfo}</p>
+        <p><strong>Total:</strong> ₱${total}.00</p>
+
+        <br>
+        <p>Thank you for ordering from SarapNom!</p>
+    `;
+
+    // CLOSE CHECKOUT
+    document.getElementById('checkout-modal').style.display = "none";
+
+    // SHOW RECEIPT
+    document.getElementById('receipt-modal').style.display = "flex";
+
+    // CLEAR CART
+    cart = [];
+    updateCartUI();
+};
+
+const closeReceiptBtn = document.getElementById('closeReceiptBtn');
+
+if (closeReceiptBtn) {
+    closeReceiptBtn.addEventListener('click', () => {
+        document.getElementById('receipt-modal').style.display = "none";
+        window.location.href = "index.html";
+    });
 }
 
+const payMethods = document.querySelectorAll('input[name="pay-method"]');
+const gcashArea = document.getElementById('gcash-area');
+const addressArea = document.getElementById('address-area');
+
+function updatePaymentUI() {
+    const selected = document.querySelector('input[name="pay-method"]:checked').value;
+
+    if (selected === "gcash") {
+        gcashArea.style.display = "block";
+        addressArea.style.display = "none";
+    }
+
+    if (selected === "cod") {
+        gcashArea.style.display = "none";
+        addressArea.style.display = "block";
+    }
+
+    if (selected === "pickup") {
+        gcashArea.style.display = "none";
+        addressArea.style.display = "none";
+    }
+}
+
+// attach listener to all radio buttons
+payMethods.forEach(method => {
+    method.addEventListener("change", updatePaymentUI);
+});
+
+// run once on load so default (GCash) is correct
+updatePaymentUI();
