@@ -43,20 +43,20 @@
 }
 
 .products-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 2.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 2rem;
 }
 
 .product-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Ensures cards in a row stay the same height */
     background: white;
-    border-radius: 15px;
+    border-radius: 20px;
     overflow: hidden;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    animation: fadeInUp 0.8s ease-out;
+    box-shadow: var(--shadow);
 }
 
 .product-card:hover {
@@ -65,19 +65,16 @@
 }
 
 .product-image {
-    position: relative;
-    height: 300px;
-    background: #f0f0f0;
+    width: 100%;
+    aspect-ratio: 1 / 1; /* FORCES every image box into a perfect square */
     overflow: hidden;
 }
 
 .product-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
+    object-fit: cover; /* Squeezes the photo to fit the square without stretching */
 }
-
 .product-card:hover .product-image img {
     transform: scale(1.1);
 }
@@ -96,7 +93,10 @@
 
 .product-info {
     padding: 1.5rem;
-    text-align: center;
+    flex-grow: 1; /* Pushes the 'Add to Cart' button to the very bottom */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .product-info h3 {
@@ -132,48 +132,56 @@
 /* 5. MODAL STYLES (The Pop-up) */
 .modal {
     display: none; 
-    position: fixed;
-    z-index: 9999;
+    position: fixed; /* Fixes it to the screen, not the page height */
+    z-index: 5000; /* Keeps it above everything */
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,0.7);
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(5px);
+    overflow-y: auto;
+}
+.modal-body {
+    display: flex;
+    flex-direction: column; /* Stacks image and text vertically */
+    align-items: center;
+    gap: 15px;
 }
 
 .modal-content {
-    background: white;
+    background-color: #fff;
     margin: 5% auto;
-    padding: 40px;
+    padding: 30px;
     width: 90%;
-    max-width: 850px; /* Rigid width for consistency */
-    min-height: 450px; /* Rigid height for consistency */
+    max-width: 420px; /* Rigid width for that clean box look */
     border-radius: 24px;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    text-align: center; /* Centers all text and buttons */
+    box-shadow: 0 15px 50px rgba(0,0,0,0.2);
 }
 
 .close-modal {
     position: absolute;
-    right: 20px;
-    top: 15px;
-    font-size: 35px;
+    right: 15px;
+    top: 5px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
     cursor: pointer;
+    z-index: 10;
 }
 
 .modal-body {
     display: flex;
-    gap: 40px;
-    align-items: stretch; /* Forces both sides to be equal height */
+    flex-direction: column; /* Forces vertical stacking */
+    align-items: center;
+    gap: 15px;
 }
 
 .modal-image {
-    flex: 1;
-    width: 350px; 
-    height: 350px; 
+    width: 100%;
+    height: 250px; /* Rigid height to keep it from being 'too long' */
     overflow: hidden;
     border-radius: 15px;
 }
@@ -181,15 +189,12 @@
 .modal-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover; 
-    display: block;
+    object-fit: cover; /* Centers the cookies in the box */
 }
 
 .modal-details {
-    flex: 1.2;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Pushes button to the bottom */
+    width: 100%;
+    text-align: center;
 }
 
 .price-item {
@@ -208,18 +213,20 @@
 
 /* --- SELECTABLE PRICE OPTIONS --- */
 .price-list {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 25px;
-    background: transparent;
-    padding: 0;
+    margin: 15px 0;
 }
 
-.price-option {
-    cursor: pointer;
-    display: block;
-    position: relative;
+.price-option .option-content {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    font-size: 0.95rem;
 }
 
 /* Hide the actual radio circle */

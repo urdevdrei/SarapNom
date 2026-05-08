@@ -475,3 +475,30 @@ payMethods.forEach(method => {
 
 // run once on load so default (GCash) is correct
 updatePaymentUI();
+
+// --- FILTERING LOGIC ---
+const filterButtons = document.querySelectorAll('.filter-btn');
+const productCards = document.querySelectorAll('.product-card');
+
+filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        // 1. Remove 'active' class from all buttons and add to the clicked one
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+
+        // 2. Get the category name from the button text
+        const filterValue = button.textContent.toLowerCase().trim();
+
+        // 3. Show/Hide products
+        productCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+
+            if (filterValue === 'all' || filterValue === cardCategory) {
+                card.style.display = 'flex'; // This allows the card's internal flex rules to work
+                card.style.opacity = '1';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+});
