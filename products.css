@@ -641,3 +641,48 @@
     width: 90%;
     max-width: 450px;
 }
+
+/* --- CUSTOM UPLOAD WARNING --- */
+.upload-warning {
+    margin-top: 12px;
+    background: #fff3f3;
+    color: #d62828;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid #f5b5b5;
+    animation: fadeIn 0.3s ease;
+}
+
+.upload-warning i {
+    margin-right: 8px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- ADDRESS WARNING DESIGN --- */
+.address-warning {
+    margin-top: 12px;
+    background: #fff3f3;
+    color: #d62828;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid #f5b5b5;
+    animation: fadeIn 0.3s ease;
+}
+
+.address-warning i {
+    margin-right: 8px;
+}

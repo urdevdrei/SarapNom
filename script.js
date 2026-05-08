@@ -334,19 +334,51 @@ document.querySelector('.confirm-payment-btn').onclick = () => {
     const receiptFile = document.getElementById('payment-receipt');
 
     // VALIDATION
-    if (method === 'cod') {
-        if (!address.value || address.value.length < 10) {
-            alert("Please enter a complete delivery address.");
-            return;
-        }
+   if (method === 'cod') {
+    if (!address.value || address.value.length < 10) {
+
+        const addressBox = document.getElementById('address-area');
+
+        addressBox.innerHTML += `
+            <div class="address-warning">
+                <i class="fas fa-location-dot"></i>
+                Please enter a complete delivery address.
+            </div>
+        `;
+
+        setTimeout(() => {
+            const warning = document.querySelector('.address-warning');
+            if (warning) {
+                warning.remove();
+            }
+        }, 3000);
+
+        return;
     }
+}
 
     if (method === 'gcash') {
-        if (receiptFile.files.length === 0) {
-            alert("Please upload your GCash proof of payment.");
-            return;
-        }
+    if (receiptFile.files.length === 0) {
+
+        const uploadBox = document.querySelector('.receipt-upload');
+
+        uploadBox.innerHTML += `
+            <div class="upload-warning">
+                <i class="fas fa-circle-exclamation"></i>
+                Please upload your GCash proof of payment first.
+            </div>
+        `;
+
+        setTimeout(() => {
+            const warning = document.querySelector('.upload-warning');
+            if (warning) {
+                warning.remove();
+            }
+        }, 3000);
+
+        return;
     }
+}
 
     // BUILD RECEIPT
     const receiptDetails = document.getElementById('receipt-details');
