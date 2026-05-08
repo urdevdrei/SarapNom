@@ -1,24 +1,54 @@
 // SAMPLE DATA STORAGE
 let products = [
-    { id: 1, name: 'Dubai Chewy Cookie', price: 45, stock: 127, category: 'Cookies' },
-    { id: 2, name: 'Chocolate Cake', price: 780, stock: 23, category: 'Cakes' },
-    { id: 3, name: 'Brownie Box', price: 320, stock: 89, category: 'Brownies' },
-    { id: 4, name: 'Matcha Cookie', price: 55, stock: 45, category: 'Cookies' }
+    { id: 1, name: 'Dubai Chewy Chocolate', price: 129, stock: 127, category: 'Cookies' },
+    { id: 2, name: 'Chocolate Cake', price: 599, stock: 23, category: 'Cakes' },
+    { id: 3, name: 'Fudgy Brownies', price: 499, stock: 89, category: 'Brownies' },
+    { id: 4, name: 'Mini Choco Chip Cookies', price: 449, stock: 89, category: 'Cookies' },
+
 ];
 
 let orders = [
     { id: 'ORD001', customer: 'Juan Dela Cruz', items: 3, total: 450, status: 'Completed', date: '2024-01-15' },
-    { id: 'ORD002', customer: 'Maria Santos', items: 2, total: 780, status: 'Pending', date: '2024-01-14' },
+    { id: 'ORD002', customer: 'Andrei Santos', items: 2, total: 780, status: 'Pending', date: '2024-01-14' },
     { id: 'ORD003', customer: 'Pedro Reyes', items: 1, total: 320, status: 'Completed', date: '2024-01-13' }
 ];
 
-let customers = [
-    { name: 'Juan Dela Cruz', email: 'juan@email.com', orders: 12, total: 2450, lastOrder: '2024-01-15' },
-    { name: 'Maria Santos', email: 'maria@email.com', orders: 8, total: 1560, lastOrder: '2024-01-14' },
-    { name: 'Pedro Reyes', email: 'pedro@email.com', orders: 5, total: 980, lastOrder: '2024-01-13' }
-];
-
 let salesChart = null;
+
+// DASHBOARD COUNTER TARGETS (removed customers)
+const dashboardCounters = {
+    products: 24,
+    orders: 127,
+    revenue: 45230
+};
+
+// CORE DATA SYNC FUNCTIONS
+function updateDashboardCounters() {
+    // Update product count
+    dashboardCounters.products = products.length;
+    
+    // Update orders count
+    dashboardCounters.orders = orders.length;
+    
+    // Update revenue (sum of all order totals)
+    dashboardCounters.revenue = orders.reduce((sum, order) => sum + order.total, 0);
+}
+
+function refreshAllSections() {
+    // Update dashboard counters
+    updateDashboardCounters();
+    
+    // Re-animate dashboard numbers
+    if (document.querySelector('.page-content.active').id === 'dashboard') {
+        animateNumbers();
+    }
+    
+    // Update all tables if visible
+    renderProducts();
+    loadOrdersTable();
+    
+    console.log('✅ All sections synchronized!');
+}
 
 // DOM Elements
 const sidebar = document.getElementById('sidebar');
@@ -40,8 +70,7 @@ document.querySelectorAll('.nav-link').forEach(link => {
         const titles = {
             dashboard: 'Dashboard',
             products: 'Products',
-            orders: 'Orders',
-            customers: 'Customers'
+            orders: 'Orders'
         };
         pageTitle.textContent = titles[page];
         
@@ -65,20 +94,18 @@ menuToggle.addEventListener('click', () => {
 // Load page data
 function loadPageData(page) {
     if (page === 'dashboard') {
+        updateDashboardCounters(); // Ensure counters are up-to-date
         animateNumbers();
         loadOrdersTable();
-        loadCustomersTable();
         initSalesChart();
     } else if (page === 'products') {
         renderProducts();
     } else if (page === 'orders') {
         loadOrdersTable();
-    } else if (page === 'customers') {
-        loadCustomersTable();
     }
 }
 
-// PRODUCTS CRUD
+// PRODUCTS CRUD - FULLY SYNCHRONIZED
 function renderProducts() {
     const tbody = document.getElementById('productsTableBody');
     tbody.innerHTML = products.map(product => `
@@ -115,7 +142,7 @@ function renderProducts() {
     `).join('');
 }
 
-// Form handling
+// Form handling - NOW UPDATES DASHBOARD
 document.getElementById('productFormData').addEventListener('submit', (e) => {
     e.preventDefault();
     const id = document.getElementById('productId').value;
@@ -129,19 +156,26 @@ document.getElementById('productFormData').addEventListener('submit', (e) => {
     };
     
     if (id) {
+        // Update existing product
         const index = products.findIndex(p => p.id === parseInt(id));
         products[index] = product;
         showToast('Product updated successfully!', 'success');
+        updateDashboardCounters();
+        if (document.querySelector('.page-content.active').id === 'dashboard') {
+            animateNumbers();
+        }
     } else {
+        // Add new product
         products.push(product);
-        showToast('Product added successfully!', 'success');
+        showToast('Product added successfully! Dashboard updated.', 'success');
+        refreshAllSections(); // Full sync
     }
     
     renderProducts();
     cancelForm();
 });
 
-// Edit/Delete functions
+// Edit/Delete functions - FULLY SYNCHRONIZED
 function editProduct(id) {
     const product = products.find(p => p.id === id);
     if (product) {
@@ -179,7 +213,7 @@ function deleteProduct(id) {
     deleteModal.show();
 }
 
-// Confirm delete button handler
+// Confirm delete button handler - NOW UPDATES DASHBOARD
 document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
     if (productToDelete) {
         products = products.filter(p => p.id !== productToDelete.id);
@@ -190,9 +224,12 @@ document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
         table.classList.add('shake');
         setTimeout(() => table.classList.remove('shake'), 500);
         
+        // Full sync after deletion
+        refreshAllSections();
+        
         // Close modal and show success toast
         bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
-        showToast(`"${productToDelete.name}" deleted successfully!`, 'success');
+        showToast(`"${productToDelete.name}" deleted! Dashboard updated (${products.length} products total).`, 'success');
         
         productToDelete = null;
     }
@@ -216,9 +253,11 @@ function cancelForm() {
     document.getElementById('productFormData').reset();
 }
 
-// Tables
+// Tables - NOW FULLY SYNCHRONIZED
 function loadOrdersTable() {
     const tbody = document.getElementById('ordersTable');
+    if (!tbody) return;
+    
     tbody.innerHTML = orders.slice(0, 5).map(order => `
         <tr>
             <td><strong>#${order.id}</strong></td>
@@ -230,32 +269,10 @@ function loadOrdersTable() {
             <td><strong>₱${order.total.toLocaleString()}</strong></td>
             <td><small class="text-muted">${order.date}</small></td>
             <td>
-                <span class="badge ${order.status === 'Completed' ? 'bg-success' : 'bg-warning'} fs-6 px-3 py-2">
+                <span class="badge ${order.status === 'Completed' ? 'bg-success' : order.status === 'Pending' ? 'bg-warning' : 'bg-danger'} fs-6 px-3 py-2">
                     ${order.status}
                 </span>
             </td>
-        </tr>
-    `).join('');
-}
-
-function loadCustomersTable() {
-    const tbody = document.getElementById('customersTable');
-    tbody.innerHTML = customers.slice(0, 8).map(customer => `
-        <tr>
-            <td>
-                <div class="d-flex align-items-center gap-3">
-                    <div class="avatar" style="background: linear-gradient(135deg, #FF6B9D, #4facfe); width: 45px; height: 45px; font-size: 1.2rem;">${customer.name.charAt(0)}</div>
-                    <div>
-                        <div class="fw-600">${customer.name}</div>
-                    </div>
-                </div>
-            </td>
-            <td>${customer.email}</td>
-            <td>
-                <span class="badge bg-primary fs-6 px-3 py-2">${customer.orders}</span>
-            </td>
-            <td><strong>₱${customer.total.toLocaleString()}</strong></td>
-            <td><small class="text-muted">${customer.lastOrder}</small></td>
         </tr>
     `).join('');
 }
@@ -272,6 +289,15 @@ function getCategoryIcon(category) {
 
 function animateNumbers() {
     document.querySelectorAll('.number[data-target]').forEach(el => {
+        // Update data-target with real data first
+        if (el.closest('.stat-card.primary')) {
+            el.dataset.target = dashboardCounters.products;
+        } else if (el.closest('.stat-card.success')) {
+            el.dataset.target = dashboardCounters.orders;
+        } else if (el.closest('.stat-card.danger')) {
+            el.dataset.target = dashboardCounters.revenue;
+        }
+        
         const target = parseInt(el.dataset.target);
         let start = 0;
         const duration = 2000;
@@ -294,9 +320,21 @@ function animateNumbers() {
 
 function initSalesChart() {
     const ctx = document.getElementById('salesChart');
+    if (!ctx) return;
+    
     if (salesChart) {
         salesChart.destroy();
     }
+    
+    // Update chart data based on real revenue
+    const monthlyRevenue = [
+        Math.floor(dashboardCounters.revenue * 0.2),
+        Math.floor(dashboardCounters.revenue * 0.25),
+        Math.floor(dashboardCounters.revenue * 0.15),
+        Math.floor(dashboardCounters.revenue * 0.3),
+        Math.floor(dashboardCounters.revenue * 0.25),
+        dashboardCounters.revenue
+    ];
     
     salesChart = new Chart(ctx, {
         type: 'line',
@@ -304,7 +342,7 @@ function initSalesChart() {
             labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
             datasets: [{
                 label: 'Sales',
-                data: [12000, 19000, 15000, 25000, 22000, 30000],
+                data: monthlyRevenue,
                 borderColor: '#FF6B9D',
                 backgroundColor: 'rgba(255, 107, 157, 0.1)',
                 borderWidth: 3,
@@ -369,12 +407,11 @@ function showToast(message, type = 'success') {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    // Initial sync
+    updateDashboardCounters();
     loadPageData('dashboard');
-});
-
-// QUICK ACTIONS FUNCTIONALITY
-document.addEventListener('DOMContentLoaded', function() {
-    // Quick Actions Buttons
+    
+    // QUICK ACTIONS FUNCTIONALITY
     document.querySelectorAll('.action-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -382,18 +419,130 @@ document.addEventListener('DOMContentLoaded', function() {
             const action = this.textContent.trim().toLowerCase();
             
             if (action.includes('add product')) {
-                // Navigate to products page and open add form
                 document.querySelector('[data-page="products"]').click();
                 setTimeout(() => {
                     document.querySelector('[data-action="addProduct"]').click();
                 }, 300);
                 showToast('Navigating to add product...', 'success');
-            } else if (action.includes('new order')) {
-                showToast('New order feature coming soon!', 'warning');
-            } else if (action.includes('manage users')) {
-                showToast('User management feature coming soon!', 'warning');
             }
         });
     });
+    
+    // Initialize search
+    initSearchClearButton();
 });
 
+// ENHANCED SEARCH FUNCTIONALITY
+let searchTimeout;
+let currentSearchTerm = '';
+
+const searchInput = document.querySelector('.search-bar input');
+
+searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    currentSearchTerm = e.target.value.toLowerCase().trim();
+    
+    searchTimeout = setTimeout(() => {
+        performSearch(currentSearchTerm);
+    }, 300);
+});
+
+function initSearchClearButton() {
+    const searchBar = document.querySelector('.search-bar');
+    let clearBtn = searchBar.querySelector('.search-clear');
+    
+    if (!clearBtn) {
+        clearBtn = document.createElement('button');
+        clearBtn.className = 'search-clear';
+        clearBtn.innerHTML = '<i class="fas fa-times"></i>';
+        clearBtn.title = 'Clear search';
+        searchBar.appendChild(clearBtn);
+        
+        clearBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            searchInput.value = '';
+            currentSearchTerm = '';
+            performSearch('');
+            searchInput.focus();
+        });
+    }
+}
+
+function performSearch(term) {
+    // Search functionality for products and orders
+    if (term) {
+        const filteredProducts = products.filter(p => 
+            p.name.toLowerCase().includes(term) || 
+            p.category.toLowerCase().includes(term)
+        );
+        renderProductsFiltered(filteredProducts);
+        
+        const filteredOrders = orders.filter(o => 
+            o.customer.toLowerCase().includes(term) || 
+            o.id.toLowerCase().includes(term)
+        );
+        loadOrdersTableFiltered(filteredOrders);
+    } else {
+        renderProducts();
+        loadOrdersTable();
+    }
+}
+
+function renderProductsFiltered(filteredProducts) {
+    const tbody = document.getElementById('productsTableBody');
+    tbody.innerHTML = filteredProducts.map(product => `
+        <tr>
+            <td><div class="avatar">${getCategoryIcon(product.category)}</div></td>
+            <td>
+                <div>
+                    <div class="fw-600">${product.name}</div>
+                    <small class="text-muted">ID: ${product.id}</small>
+                </div>
+            </td>
+            <td><strong>₱${product.price.toLocaleString()}</strong></td>
+            <td>
+                <span class="badge ${product.stock < 10 ? 'bg-danger' : 'bg-success'} fs-6 px-3 py-2">
+                    ${product.stock}
+                </span>
+            </td>
+            <td><span class="badge bg-primary fs-6 px-3 py-2">${product.category}</span></td>
+            <td>
+                <div class="d-flex gap-1">
+                    <button class="btn btn-sm btn-outline-primary" onclick="editProduct(${product.id})" title="Edit">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${product.id})" title="Delete">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        </tr>
+    `).join('') || '<tr><td colspan="6" class="text-center text-muted py-5">No products found</td></tr>';
+}
+
+function loadOrdersTableFiltered(filteredOrders) {
+    const tbody = document.getElementById('ordersTable');
+    if (!tbody) return;
+    
+    tbody.innerHTML = filteredOrders.slice(0, 5).map(order => `
+        <tr>
+            <td><strong>#${order.id}</strong></td>
+            <td>
+                <div>${order.customer}</div>
+                <small class="text-muted">${order.items} items</small>
+            </td>
+            <td>${order.items}</td>
+            <td><strong>₱${order.total.toLocaleString()}</strong></td>
+            <td><small class="text-muted">${order.date}</small></td>
+            <td>
+                <span class="badge ${order.status === 'Completed' ? 'bg-success' : order.status === 'Pending' ? 'bg-warning' : 'bg-danger'} fs-6 px-3 py-2">
+                    ${order.status}
+                </span>
+            </td>
+        </tr>
+    `).join('') || '<tr><td colspan="6" class="text-center text-muted py-5">No orders found</td></tr>';
+}
+
+// Expose global functions for onclick handlers
+window.editProduct = editProduct;
+window.deleteProduct = deleteProduct;

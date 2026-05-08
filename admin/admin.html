@@ -18,7 +18,7 @@
         <div class="sidebar-header">
             <div class="logo">
                 <i class="fas fa-utensils me-2"></i>
-                <h3>SarapNom</h3>
+                <h3>SarapNom Admin</h3>
             </div>
         </div>
         <nav class="sidebar-nav">
@@ -31,9 +31,6 @@
             <a href="#" data-page="orders" class="nav-link">
                 <i class="fas fa-shopping-bag me-2"></i>Orders
             </a>
-            <a href="#" data-page="customers" class="nav-link">
-                <i class="fas fa-users me-2"></i>Customers
-            </a>
         </nav>
     </div>
 
@@ -43,7 +40,7 @@
                 <i class="fas fa-bars"></i>
             </button>
             <div class="header-content">
-                <h1 id="pageTitle">Dashboard</h1>
+                <h1 id="pageTitle"></h1>
                 <div class="search-bar">
                     <i class="fas fa-search"></i>
                     <input type="text" placeholder="Search...">
@@ -55,7 +52,7 @@
             <!-- DASHBOARD -->
             <div id="dashboard" class="page-content active">
                 <div class="row g-4 mb-5">
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="stat-card primary">
                             <div class="stat-icon">
                                 <i class="fas fa-cookie-bite"></i>
@@ -66,7 +63,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="stat-card success">
                             <div class="stat-icon">
                                 <i class="fas fa-shopping-bag"></i>
@@ -77,18 +74,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="stat-card warning">
-                            <div class="stat-icon">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="stat-info">
-                                <div class="stat-label">Customers</div>
-                                <div class="number" data-target="89">0</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
+                    <div class="col-lg-4 col-md-6">
                         <div class="stat-card danger">
                             <div class="stat-icon">
                                 <i class="fas fa-chart-line"></i>
@@ -120,7 +106,6 @@
                             <div class="card-body">
                                 <div class="quick-actions">
                                     <button class="action-btn primary"><i class="fas fa-plus"></i>Add Product</button>
-                    
                                 </div>
                             </div>
                         </div>
@@ -170,7 +155,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">Category</label>
-                                    <select class="form-select" id="productCategory" required>
+                                    <select class="form-select text-secondary" id="productCategory" required>
                                         <option value="">Select Category</option>
                                         <option value="Cookies">🍪 Cookies</option>
                                         <option value="Cakes">🎂 Cakes</option>
@@ -195,7 +180,7 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5><i class="fas fa-list me-2"></i>All Products</h5>
                         <div class="table-actions">
-                            <select class="form-select form-select-sm">
+                            <select class="form-select form-select-sm text-secondary">
                                 <option>Show 10</option>
                                 <option>Show 25</option>
                                 <option>Show 50</option>
@@ -228,7 +213,6 @@
                         <div class="card">
                             <div class="card-header d-flex justify-content-between">
                                 <h5><i class="fas fa-shopping-bag me-2"></i>Recent Orders</h5>
-                                <span class="badge bg-primary fs-6">127 Total</span>
                             </div>
                             <div class="table-responsive">
                                 <table class="table">
@@ -249,15 +233,15 @@
                             <div class="card-body">
                                 <div class="status-cards">
                                     <div class="status-card completed">
-                                        <div class="status-number">85</div>
+                                        <div class="status-number">2</div>
                                         <div class="status-label">Completed</div>
                                     </div>
                                     <div class="status-card pending">
-                                        <div class="status-number">32</div>
+                                        <div class="status-number">1</div>
                                         <div class="status-label">Pending</div>
                                     </div>
                                     <div class="status-card cancelled">
-                                        <div class="status-number">10</div>
+                                        <div class="status-number">0</div>
                                         <div class="status-label">Cancelled</div>
                                     </div>
                                 </div>
@@ -266,63 +250,44 @@
                     </div>
                 </div>
             </div>
-
-            <!-- CUSTOMERS -->
-            <div id="customers" class="page-content">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between">
-                        <h5><i class="fas fa-users me-2"></i>Customers</h5>
-                        <span class="badge bg-success fs-6">89 Total</span>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead class="table-light">
-                                <tr><th>Customer</th><th>Email</th><th>Orders</th><th>Total Spent</th><th>Last Order</th></tr>
-                            </thead>
-                            <tbody id="customersTable">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </main>
         <!-- DELETE CONFIRMATION MODAL -->
-<div class="modal fade" id="deleteModal" tabindex="-1" data-bs-backdrop="static">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content glass-modal">
-            <div class="modal-header border-0 pb-0">
-                <div class="delete-icon">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <h5 class="modal-title fw-800" id="deleteModalTitle">Delete Product?</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body pt-0">
-                <p class="mb-4" id="deleteModalBody">
-                    Are you sure you want to delete <strong id="productNameDelete"></strong>? 
-                    This action cannot be undone.
-                </p>
-                <div class="product-preview mb-4" id="productPreview" style="display: none;">
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="avatar delete-avatar"></div>
-                        <div>
-                            <div class="fw-600 fs-5" id="previewName"></div>
-                            <div class="text-muted small">₱<span id="previewPrice"></span> | <span id="previewStock"></span> in stock</div>
+        <div class="modal fade" id="deleteModal" tabindex="-1" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content glass-modal">
+                    <div class="modal-header border-0 pb-0">
+                        <div class="delete-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
                         </div>
+                        <h5 class="modal-title fw-800" id="deleteModalTitle">Delete Product?</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body pt-0">
+                        <p class="mb-4" id="deleteModalBody">
+                            Are you sure you want to delete <strong id="productNameDelete"></strong>? 
+                            This action cannot be undone.
+                        </p>
+                        <div class="product-preview mb-4" id="productPreview" style="display: none;">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="avatar delete-avatar"></div>
+                                <div>
+                                    <div class="fw-600 fs-5" id="previewName"></div>
+                                    <div class="text-muted small">₱<span id="previewPrice"></span> | <span id="previewStock"></span> in stock</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0 gap-2">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </button>
+                        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                            <i class="fas fa-trash me-2"></i>Delete Product
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer border-0 pt-0 gap-2">
-                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                    <i class="fas fa-times me-2"></i>Cancel
-                </button>
-                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
-                    <i class="fas fa-trash me-2"></i>Delete Product
-                </button>
-            </div>
         </div>
-    </div>
-</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
