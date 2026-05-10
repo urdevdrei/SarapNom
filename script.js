@@ -318,9 +318,11 @@ const checkoutBtn = document.querySelector('.checkout-btn');
 if (checkoutBtn && checkoutModal) {
     checkoutBtn.addEventListener('click', () => {
         if (cart.length === 0) {
-            alert("Your bag is empty!");
-            return;
-        }
+    document.getElementById("custom-alert").style.display = "flex";
+    return;
+}
+
+
         
         const cartSidebar = document.getElementById('cart-sidebar');
         if (cartSidebar) cartSidebar.classList.remove('active');
@@ -480,6 +482,22 @@ payMethods.forEach(method => {
 
 // run once on load so default (GCash) is correct
 updatePaymentUI();
+
+const closeAlertBtn = document.getElementById("close-alert-btn");
+const customAlert = document.getElementById("custom-alert");
+
+if (closeAlertBtn && customAlert) {
+
+    closeAlertBtn.addEventListener("click", () => {
+        customAlert.style.display = "none";
+    });
+
+    customAlert.addEventListener("click", (e) => {
+        if (e.target === customAlert) {
+            customAlert.style.display = "none";
+        }
+    });
+}
 
 // --- FILTERING LOGIC ---
 const filterButtons = document.querySelectorAll('.filter-btn');
