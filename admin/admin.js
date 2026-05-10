@@ -15,7 +15,7 @@ let orders = [
 
 let salesChart = null;
 
-// DASHBOARD COUNTER TARGETS (removed customers)
+// DASHBOARD COUNTER TARGETS 
 const dashboardCounters = {
     products: 24,
     orders: 127,

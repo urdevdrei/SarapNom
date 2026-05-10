@@ -6,7 +6,8 @@
     <title>Our Products - SarapNom</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css"> <link rel="stylesheet" href="products.css"> ```
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="products.css">
 </head>
 <body>
     
@@ -115,10 +116,7 @@
                 <p class="price">₱449</p>
                 <button class="add-to-cart">Add to Cart</button>
             </div>
-
         </div>
-
-
     </div>
 </section>
 
@@ -133,6 +131,17 @@
                 <h2 id="modalTitle"></h2>
                 <p id="modalDescription" class="item-desc"></p>
                 <div class="price-list" id="modalPriceList"></div>
+                
+                <!-- QUANTITY SELECTOR -->
+                <div class="quantity-selector">
+                    <label>Quantity:</label>
+                    <div class="quantity-controls">
+                        <button type="button" class="qty-btn qty-minus" id="qtyMinus">-</button>
+                        <input type="number" id="productQty" value="1" min="1" max="10">
+                        <button type="button" class="qty-btn qty-plus" id="qtyPlus">+</button>
+                    </div>
+                </div>
+                
                 <button class="cta-button modal-buy" style="border:none; width:100%; cursor:pointer;">Add to Cart</button>
             </div>
         </div>
@@ -155,49 +164,28 @@
 </div>
 
 <!-- TERMS & CONDITIONS -->
-
 <div class="terms-popup" id="termsPopup">
   <div class="terms-box">
-
     <h2>Terms & Conditions</h2>
-
     <div class="terms-content">
-
-      <p>
-        By placing an order with SarapNom, you agree to the following terms and conditions:
-      </p>
-
+      <p>By placing an order with SarapNom, you agree to the following terms and conditions:</p>
       <ul>
         <li>All orders are subject to product availability.</li>
-
         <li>Customers must provide complete and correct delivery information.</li>
-
         <li>Delivery fees will be shouldered by the customer.</li>
-
         <li>Orders cannot be cancelled once confirmed and prepared.</li>
-
         <li>Payments made through GCash must include a valid proof of payment or receipt.</li>
-
         <li>SarapNom is not responsible for delays caused by incorrect addresses, unavailable recipients, or courier issues.</li>
-
         <li>Products should be checked immediately upon receiving.</li>
-
         <li>For food safety reasons, no refunds or returns are allowed once products are received unless the issue is caused by the store.</li>
-
         <li>By proceeding, the customer confirms that all provided information and payment details are accurate.</li>
       </ul>
-
     </div>
-
     <div class="terms-item">
       <input type="checkbox" class="terms-check" id="agreeAll">
-      <label for="agreeAll">
-        I have read and agree to all Terms & Conditions.
-      </label>
+      <label for="agreeAll">I have read and agree to all Terms & Conditions.</label>
     </div>
-
     <button id="acceptBtn" disabled>Continue</button>
-
   </div>
 </div>
 
@@ -205,6 +193,8 @@
     <div class="modal-content checkout-container">
         <span class="close-checkout">&times;</span>
         <h2>Delivery & Payment</h2>
+        
+        <div id="checkout-items-list" class="checkout-items"></div>
         
         <div class="method-selector">
             <label class="method-option">
@@ -222,47 +212,35 @@
         </div>
 
         <div id="gcash-area">
-
-    <div class="gcash-qr-placeholder">
-        <img src="payment images/gcashqr.jpg" alt="GCash QR">
-    </div>
-
-    <div class="receipt-upload">
-        <label for="payment-receipt">
-            Upload GCash Receipt / Proof of Payment
-        </label>
-
-        <input type="file"
-               id="payment-receipt"
-               accept="image/*">
-    </div>
-
-</div>
+            <div class="gcash-qr-placeholder">
+                <img src="payment images/gcashqr.jpg" alt="GCash QR">
+            </div>
+            <div class="receipt-upload">
+                <label for="payment-receipt">Upload GCash Receipt / Proof of Payment</label>
+                <input type="file" id="payment-receipt" accept="image/*">
+            </div>
+        </div>
 
         <div id="address-area" style="display:none;">
             <textarea id="delivery-address" placeholder="Enter full delivery address (House No., Street, Brgy, City)"></textarea>
         </div>
 
+        <div class="final-total">
+            <strong>Total: <span id="checkout-final-amount">₱0.00</span></strong>
+        </div>
+        
         <button class="confirm-payment-btn">Place Order</button>
     </div>
 </div>
 
 <div id="receipt-modal" class="modal">
-
     <div class="modal-content receipt-container">
-
         <h2>Order Receipt</h2>
-
         <div id="receipt-details"></div>
-
-        <button id="closeReceiptBtn" class="confirm-payment-btn">
-            Done
-        </button>
-
+        <button id="closeReceiptBtn" class="confirm-payment-btn">Done</button>
     </div>
-
 </div>
 
- <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

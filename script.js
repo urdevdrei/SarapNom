@@ -1,11 +1,3 @@
-// ============================================
-// COMPLETE SCRIPT.JS FOR SARAPNOM
-// Combines home page + products page functionality
-// ============================================
-
-// --- 0. HOME PAGE FUNCTIONALITY ---
-
-// Mobile Menu Toggle (works on all pages)
 const navToggle = document.querySelector('.nav-toggle');
 const navMenu = document.querySelector('.nav-menu');
 
@@ -94,9 +86,7 @@ function updateTimer() {
 setInterval(updateTimer, 1000);
 updateTimer();
 
-// --- 1. YOUR EXISTING PRODUCTS PAGE FUNCTIONALITY ---
-
-// PRODUCT MODAL DATA
+// --- 1. PRODUCT MODAL DATA ---
 const productInfo = {
     "dubai": {
         title: "Dubai Chewy Chocolate",
@@ -168,6 +158,9 @@ document.querySelectorAll('.product-card').forEach(card => {
                     `;
                 }).join('');
                 
+                // Reset quantity to 1 when opening modal
+                document.getElementById('productQty').value = '1';
+                
                 modal.style.display = "block";
             }
         });
@@ -188,6 +181,36 @@ window.addEventListener('click', (event) => {
     }
 });
 
+// --- QUANTITY SELECTOR FUNCTIONALITY ---
+const qtyPlus = document.getElementById('qtyPlus');
+const qtyMinus = document.getElementById('qtyMinus');
+const productQty = document.getElementById('productQty');
+
+if (qtyPlus && qtyMinus && productQty) {
+    // Increase quantity
+    qtyPlus.addEventListener('click', () => {
+        let currentQty = parseInt(productQty.value);
+        if (currentQty < 10) {
+            productQty.value = currentQty + 1;
+        }
+    });
+
+    // Decrease quantity
+    qtyMinus.addEventListener('click', () => {
+        let currentQty = parseInt(productQty.value);
+        if (currentQty > 1) {
+            productQty.value = currentQty - 1;
+        }
+    });
+
+    // Prevent manual input outside range
+    productQty.addEventListener('input', () => {
+        let value = parseInt(productQty.value);
+        if (isNaN(value) || value < 1) productQty.value = 1;
+        if (value > 10) productQty.value = 10;
+    });
+}
+
 // --- 2. CART FUNCTIONALITY ---
 let cart = [];
 
@@ -203,16 +226,17 @@ if (closeCart && cartSidebar) {
     closeCart.onclick = () => cartSidebar.classList.remove('active');
 }
 
-// Add to cart from modal
+// Add to cart from modal (WITH QUANTITY)
 const modalBuyBtn = document.querySelector('.modal-buy');
 if (modalBuyBtn) {
     modalBuyBtn.addEventListener('click', () => {
         const selectedOption = document.querySelector('input[name="product-size"]:checked');
         const productName = document.getElementById('modalTitle')?.innerText;
+        const quantity = parseInt(document.getElementById('productQty')?.value) || 1;
 
         if (selectedOption && productName) {
             const priceText = selectedOption.parentElement.querySelector('.option-cost').innerText;
-            const price = parseInt(priceText.replace('₱', ''));
+            const price = parseInt(priceText.replace('₱', '').replace('.00', ''));
             const sizeLabel = selectedOption.value;
             const productImg = document.getElementById('modalImg')?.src;
 
@@ -221,7 +245,9 @@ if (modalBuyBtn) {
                 name: productName,
                 size: sizeLabel,
                 price: price,
-                img: productImg
+                quantity: quantity,
+                img: productImg,
+                total: price * quantity
             };
 
             cart.push(item);
@@ -244,22 +270,22 @@ function updateCartUI() {
     let total = 0;
 
     cart.forEach(item => {
-        total += item.price;
+        total += item.total;
         container.innerHTML += `
             <div class="cart-item">
-                <img src="${item.img}">
+                <img src="${item.img}" alt="${item.name}">
                 <div class="item-info">
                     <h4>${item.name}</h4>
-                    <small>${item.size}</small>
-                    <p>₱${item.price}</p>
+                    <small>${item.size} × ${item.quantity}</small>
+                    <p>₱${item.total.toLocaleString()}</p>
                 </div>
-                <i class="fas fa-trash" onclick="removeItem(${item.id})" style="cursor:pointer; color:#ccc;"></i>
+                <i class="fas fa-trash" onclick="removeItem(${item.id})" style="cursor:pointer; color:#ccc; font-size:18px;"></i>
             </div>
         `;
     });
 
-    if (totalEl) totalEl.innerText = `₱${total}.00`;
-    if (countEl) countEl.innerText = cart.length;
+    if (totalEl) totalEl.innerText = `₱${total.toLocaleString()}.00`;
+    if (countEl) countEl.innerText = cart.reduce((sum, item) => sum + item.quantity, 0);
 }
 
 function removeItem(id) {
@@ -271,14 +297,18 @@ function removeItem(id) {
 const acceptBtn = document.getElementById("acceptBtn");
 const agreeCheck = document.getElementById("agreeAll");
 
-agreeCheck.addEventListener("change", () => {
-    acceptBtn.disabled = !agreeCheck.checked;
-});
+if (agreeCheck && acceptBtn) {
+    agreeCheck.addEventListener("change", () => {
+        acceptBtn.disabled = !agreeCheck.checked;
+    });
 
-acceptBtn.addEventListener("click", () => {
-    document.getElementById("termsPopup").style.display = "none";
-});
-
+    acceptBtn.addEventListener("click", () => {
+        const termsPopup = document.getElementById("termsPopup");
+        if (termsPopup) {
+            termsPopup.style.display = "none";
+        }
+    });
+}
 
 // --- 4. CHECKOUT FUNCTIONALITY ---
 const checkoutModal = document.getElementById('checkout-modal');
@@ -300,17 +330,17 @@ if (checkoutBtn && checkoutModal) {
         
         if (listContainer) {
             listContainer.innerHTML = cart.map(item => {
-                total += item.price;
+                total += item.total;
                 return `
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                        <span>${item.name} (${item.size})</span>
-                        <span>₱${item.price}</span>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px; padding:8px 0;">
+                        <span>${item.name} (${item.size}) × ${item.quantity}</span>
+                        <span>₱${item.total.toLocaleString()}</span>
                     </div>
                 `;
             }).join('');
             
             const finalAmountEl = document.getElementById('checkout-final-amount');
-            if (finalAmountEl) finalAmountEl.innerText = `₱${total}.00`;
+            if (finalAmountEl) finalAmountEl.innerText = `₱${total.toLocaleString()}.00`;
         }
         
         checkoutModal.style.display = "block";
@@ -327,72 +357,59 @@ window.addEventListener('click', (event) => {
 
 // Payment method toggle
 document.querySelector('.confirm-payment-btn').onclick = () => {
-
-    const method = document.querySelector('input[name="pay-method"]:checked').value;
+    const method = document.querySelector('input[name="pay-method"]:checked')?.value;
 
     const address = document.getElementById('delivery-address');
     const receiptFile = document.getElementById('payment-receipt');
 
     // VALIDATION
-   if (method === 'cod') {
-    if (!address.value || address.value.length < 10) {
-
-        const addressBox = document.getElementById('address-area');
-
-        addressBox.innerHTML += `
-            <div class="address-warning">
-                <i class="fas fa-location-dot"></i>
-                Please enter a complete delivery address.
-            </div>
-        `;
-
-        setTimeout(() => {
-            const warning = document.querySelector('.address-warning');
-            if (warning) {
-                warning.remove();
+    if (method === 'cod') {
+        if (!address || !address.value || address.value.length < 10) {
+            const addressBox = document.getElementById('address-area');
+            if (addressBox && !addressBox.querySelector('.address-warning')) {
+                addressBox.innerHTML += `
+                    <div class="address-warning" style="color:#e74c3c; font-size:14px; margin-top:10px; padding:8px; background:#ffe6e6; border-radius:4px;">
+                        <i class="fas fa-location-dot"></i> Please enter a complete delivery address.
+                    </div>
+                `;
+                setTimeout(() => {
+                    const warning = addressBox.querySelector('.address-warning');
+                    if (warning) warning.remove();
+                }, 4000);
             }
-        }, 3000);
-
-        return;
+            return;
+        }
     }
-}
 
     if (method === 'gcash') {
-    if (receiptFile.files.length === 0) {
-
-        const uploadBox = document.querySelector('.receipt-upload');
-
-        uploadBox.innerHTML += `
-            <div class="upload-warning">
-                <i class="fas fa-circle-exclamation"></i>
-                Please upload your GCash proof of payment first.
-            </div>
-        `;
-
-        setTimeout(() => {
-            const warning = document.querySelector('.upload-warning');
-            if (warning) {
-                warning.remove();
+        if (!receiptFile || receiptFile.files.length === 0) {
+            const uploadBox = document.querySelector('.receipt-upload');
+            if (uploadBox && !uploadBox.querySelector('.upload-warning')) {
+                uploadBox.innerHTML += `
+                    <div class="upload-warning" style="color:#e74c3c; font-size:14px; margin-top:10px; padding:8px; background:#ffe6e6; border-radius:4px;">
+                        <i class="fas fa-circle-exclamation"></i> Please upload your GCash proof of payment first.
+                    </div>
+                `;
+                setTimeout(() => {
+                    const warning = uploadBox.querySelector('.upload-warning');
+                    if (warning) warning.remove();
+                }, 4000);
             }
-        }, 3000);
-
-        return;
+            return;
+        }
     }
-}
 
     // BUILD RECEIPT
     const receiptDetails = document.getElementById('receipt-details');
-
     let total = 0;
 
     let itemsHTML = cart.map(item => {
-        total += item.price;
-
+        total += item.total;
         return `
-            <div style="margin-bottom:10px;">
+            <div style="margin-bottom:15px; padding:12px; background:#f8f9fa; border-radius:8px;">
                 <strong>${item.name}</strong><br>
-                ${item.size}<br>
-                ₱${item.price}
+                <small>${item.size} × ${item.quantity}</small><br>
+                <span style="font-size:16px; font-weight:600;">₱${item.total.toLocaleString()}</span>
             </div>
         `;
     }).join('');
@@ -400,7 +417,6 @@ document.querySelector('.confirm-payment-btn').onclick = () => {
     const orderNumber = Math.floor(Math.random() * 900000 + 100000);
 
     let deliveryInfo = "";
-
     if (method === "cod") {
         deliveryInfo = "Delivery (COD)";
     } else if (method === "gcash") {
@@ -410,19 +426,20 @@ document.querySelector('.confirm-payment-btn').onclick = () => {
     }
 
     receiptDetails.innerHTML = `
-        <p><strong>Order #:</strong> ${orderNumber}</p>
-        <hr>
-
+        <div style="text-align:center; margin-bottom:20px;">
+            <h2 style="color:#27ae60; margin-bottom:10px;">Order Confirmed! ✅</h2>
+            <p style="font-size:18px; font-weight:600;">Order #${orderNumber}</p>
+        </div>
+        <hr style="border:1px solid #eee;">
         ${itemsHTML}
-
-        <hr>
-
-        <p><strong>Payment Method:</strong> ${method.toUpperCase()}</p>
-        <p><strong>Order Type:</strong> ${deliveryInfo}</p>
-        <p><strong>Total:</strong> ₱${total}.00</p>
-
+        <hr style="border:1px solid #eee;">
+        <div style="margin-top:15px;">
+            <p><strong>Payment Method:</strong> ${method.toUpperCase()}</p>
+            <p><strong>Order Type:</strong> ${deliveryInfo}</p>
+            <p style="font-size:20px; font-weight:700; color:#27ae60;">Total: ₱${total.toLocaleString()}.00</p>
+        </div>
         <br>
-        <p>Thank you for ordering from SarapNom!</p>
+        <p style="text-align:center; color:#7f8c8d; font-style:italic;">Thank you for ordering from SarapNom! 🍪✨</p>
     `;
 
     // CLOSE CHECKOUT
@@ -450,22 +467,10 @@ const gcashArea = document.getElementById('gcash-area');
 const addressArea = document.getElementById('address-area');
 
 function updatePaymentUI() {
-    const selected = document.querySelector('input[name="pay-method"]:checked').value;
+    const selected = document.querySelector('input[name="pay-method"]:checked')?.value;
 
-    if (selected === "gcash") {
-        gcashArea.style.display = "block";
-        addressArea.style.display = "none";
-    }
-
-    if (selected === "cod") {
-        gcashArea.style.display = "none";
-        addressArea.style.display = "block";
-    }
-
-    if (selected === "pickup") {
-        gcashArea.style.display = "none";
-        addressArea.style.display = "none";
-    }
+    if (gcashArea) gcashArea.style.display = selected === "gcash" ? "block" : "none";
+    if (addressArea) addressArea.style.display = selected === "cod" ? "block" : "none";
 }
 
 // attach listener to all radio buttons
@@ -494,7 +499,7 @@ filterButtons.forEach(button => {
             const cardCategory = card.getAttribute('data-category');
 
             if (filterValue === 'all' || filterValue === cardCategory) {
-                card.style.display = 'flex'; // This allows the card's internal flex rules to work
+                card.style.display = 'flex';
                 card.style.opacity = '1';
             } else {
                 card.style.display = 'none';
