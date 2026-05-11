@@ -8,9 +8,10 @@ let products = [
 ];
 
 let orders = [
-    { id: 'ORD001', customer: 'Juan Dela Cruz', items: 3, total: 450, status: 'Completed', date: '2024-01-15' },
+    { id: 'ORD001', customer: 'Rhovin Dolor', items: 3, total: 450, status: 'Completed', date: '2024-01-15' },
     { id: 'ORD002', customer: 'Andrei Santos', items: 2, total: 780, status: 'Pending', date: '2024-01-14' },
-    { id: 'ORD003', customer: 'Pedro Reyes', items: 1, total: 320, status: 'Completed', date: '2024-01-13' }
+    { id: 'ORD003', customer: 'James Abaya', items: 1, total: 320, status: 'Completed', date: '2024-01-13' },
+    { id: 'ORD004', customer: 'Darren Molina', items: 5, total: 645, status: 'Cancelled', date: '2024-01-13' }
 ];
 
 let salesChart = null;
@@ -546,3 +547,4 @@ function loadOrdersTableFiltered(filteredOrders) {
 // Expose global functions for onclick handlers
 window.editProduct = editProduct;
 window.deleteProduct = deleteProduct;
+
