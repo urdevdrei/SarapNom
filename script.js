@@ -360,12 +360,13 @@ window.addEventListener('click', (event) => {
 // Payment method toggle
 document.querySelector('.confirm-payment-btn').onclick = () => {
     const method = document.querySelector('input[name="pay-method"]:checked')?.value;
+    const deliveryMethod = document.querySelector('input[name="delivery-method"]:checked')?.value;
 
     const address = document.getElementById('delivery-address');
     const receiptFile = document.getElementById('payment-receipt');
 
     // VALIDATION
-    if (method === 'cod') {
+   if (deliveryMethod === 'delivery') {
         if (!address || !address.value || address.value.length < 10) {
             const addressBox = document.getElementById('address-area');
             if (addressBox && !addressBox.querySelector('.address-warning')) {
@@ -418,14 +419,20 @@ document.querySelector('.confirm-payment-btn').onclick = () => {
 
     const orderNumber = Math.floor(Math.random() * 900000 + 100000);
 
-    let deliveryInfo = "";
-    if (method === "cod") {
-        deliveryInfo = "Delivery (COD)";
-    } else if (method === "gcash") {
-        deliveryInfo = "GCash Paid (Online)";
-    } else {
-        deliveryInfo = "Pickup at Store";
-    }
+    let paymentInfo = "";
+let deliveryInfo = "";
+
+if (method === "gcash") {
+    paymentInfo = "GCash";
+} else {
+    paymentInfo = "CASH";
+}
+
+if (deliveryMethod === "delivery") {
+    deliveryInfo = "Delivery";
+} else {
+    deliveryInfo = "Pickup";
+}
 
     receiptDetails.innerHTML = `
         <div style="text-align:center; margin-bottom:20px;">
@@ -436,8 +443,8 @@ document.querySelector('.confirm-payment-btn').onclick = () => {
         ${itemsHTML}
         <hr style="border:1px solid #eee;">
         <div style="margin-top:15px;">
-            <p><strong>Payment Method:</strong> ${method.toUpperCase()}</p>
-            <p><strong>Order Type:</strong> ${deliveryInfo}</p>
+            <p><strong>Payment Method:</strong> ${paymentInfo}</p>
+<p><strong>Mode of Delivery:</strong> ${deliveryInfo}</p>
             <p style="font-size:20px; font-weight:700; color:#27ae60;">Total: ₱${total.toLocaleString()}.00</p>
         </div>
         <br>
@@ -465,18 +472,31 @@ if (closeReceiptBtn) {
 }
 
 const payMethods = document.querySelectorAll('input[name="pay-method"]');
+const deliveryMethods = document.querySelectorAll('input[name="delivery-method"]');
 const gcashArea = document.getElementById('gcash-area');
 const addressArea = document.getElementById('address-area');
 
 function updatePaymentUI() {
-    const selected = document.querySelector('input[name="pay-method"]:checked')?.value;
+    const paymentMethod = document.querySelector('input[name="pay-method"]:checked')?.value;
+    const deliveryMethod = document.querySelector('input[name="delivery-method"]:checked')?.value;
 
-    if (gcashArea) gcashArea.style.display = selected === "gcash" ? "block" : "none";
-    if (addressArea) addressArea.style.display = selected === "cod" ? "block" : "none";
+    // Show GCash upload only if GCash selected
+    if (gcashArea) {
+        gcashArea.style.display = paymentMethod === "gcash" ? "block" : "none";
+    }
+
+    // Show address only if DELIVERY selected
+    if (addressArea) {
+        addressArea.style.display = deliveryMethod === "delivery" ? "block" : "none";
+    }
 }
 
 // attach listener to all radio buttons
 payMethods.forEach(method => {
+    method.addEventListener("change", updatePaymentUI);
+});
+
+deliveryMethods.forEach(method => {
     method.addEventListener("change", updatePaymentUI);
 });
 

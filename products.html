@@ -197,20 +197,43 @@
         
         <div id="checkout-items-list" class="checkout-items"></div>
         
-        <div class="method-selector">
-            <label class="method-option">
-                <input type="radio" name="pay-method" value="gcash" checked>
-                <div class="method-box"><i class="fas fa-mobile-alt"></i> GCash</div>
-            </label>
-            <label class="method-option">
-                <input type="radio" name="pay-method" value="cod">
-                <div class="method-box"><i class="fas fa-truck"></i> COD</div>
-            </label>
-            <label class="method-option">
-                <input type="radio" name="pay-method" value="pickup">
-                <div class="method-box"><i class="fas fa-store"></i> Pickup</div>
-            </label>
+        <!-- PAYMENT METHOD -->
+<h3 style="margin-top:20px;">Payment Method</h3>
+
+<div class="method-selector">
+    <label class="method-option">
+        <input type="radio" name="pay-method" value="gcash" checked>
+        <div class="method-box">
+            <i class="fas fa-mobile-alt"></i> GCash
         </div>
+    </label>
+
+    <label class="method-option">
+        <input type="radio" name="pay-method" value="cod">
+        <div class="method-box">
+            <i class="fas fa-money-bill-wave"></i> CASH
+        </div>
+    </label>
+</div>
+
+<!-- DELIVERY MODE -->
+<h3 style="margin-top:20px;">Mode of Delivery</h3>
+
+<div class="method-selector">
+    <label class="method-option">
+        <input type="radio" name="delivery-method" value="delivery" checked>
+        <div class="method-box">
+            <i class="fas fa-truck"></i> Delivery
+        </div>
+    </label>
+
+    <label class="method-option">
+        <input type="radio" name="delivery-method" value="pickup">
+        <div class="method-box">
+            <i class="fas fa-store"></i> Pickup
+        </div>
+    </label>
+</div>
 
         <div id="gcash-area">
             <div class="gcash-qr-placeholder">
